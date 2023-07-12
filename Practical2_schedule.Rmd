@@ -1,0 +1,613 @@
+---
+title: 'Practical 2: Linear models and ANOVA'
+author: "BIO2020"
+output:
+  word_document:
+    number_sections: yes
+  pdf_document: default
+  html_document:
+    df_print: paged
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+<style type="text/css">
+span.boxed {
+  border:5px solid gray;
+  border-radius:10px;
+  padding: 5px;
+}
+span.invboxed {
+  border:5px solid gray;
+  padding: 5px;
+  border-radius:10px;
+  color: white;
+}
+table, td, th
+{
+border:0px;
+}
+</style>
+
+
+```{r, echo = FALSE, message=FALSE,warning= FALSE}
+library(dplyr)
+library(palmerpenguins)
+library(ggformula)
+library(mosaic)
+library(bio2020)
+```
+
+# Introduction
+In this practical you will be introduced to **linear models** which provide a way to assess the relationships between a **response** variable and one or more **explanatory** variable(s). You will recall that we are trying to use a "goal-oriented" approach where possible in BIO2020:
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">goal</span> ( <span class="boxed">y</span> ~ <span class="boxed">x</span> , data = <span class="boxed">mydata</span>, ... )</strong> 
+</h2></center>
+
+&nbsp;
+
+So far your goals have been simple summary statistics (mean, median, standard deviation), or different types of plots (boxplot, scatterplot etc.). In both cases the response variable is **y**, typically placed on the vertical axis in a graph, and **x** is the explanatory variable(s) on the horizontal axis. A linear model is a way of formally testing whether there is really a relationship between your response and explanatory variables. You can access a linear model using the `lm()` function in R:
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">linear model</span> ( <span class="boxed">y</span> ~ <span class="boxed">x</span> , data = <span class="boxed">mydata</span>, ... )</strong> 
+</h2></center>
+
+&nbsp;
+
+**Important**
+Commonly used names for linear models like this differ depending on the explanatory variable:
+
+* **Regression** - when you have one or more continuous explanatory variables
+* **Analysis of Variance (ANOVA)** - when you have one or more categorical explanatory variables
+
+# Aims and objectives
+The overall aim of this practical are to show you how to use the `lm()` function, using datasets that you should already have seen on the interactive websites at 
+[linear models with continuous explanatories](https://naturalandenvironmentalscience.shinyapps.io/linear_explan/) and  [linear models with categorical explanatories](https://naturalandenvironmentalscience.shinyapps.io/categorical_explan/). Please work through these websites **before** attempting this practical. You will also have the opportunity to gain confidence using linear models with a new dataset. **Specific objectives** are to:
+
+1. understand how to interpret results from linear models with **continuous explanatory variables**
+2. learn the use of linear models with **categorical explanatory variables**, and explore multiple comparison tests, to compare different treatment levels
+3. apply these ideas with a **large biological dataset**.
+
+Inherent in the idea of linear models is the idea of cause and effect, i.e. your explanatory variables cause some sort of change in your response variable. How do you know which is the response and which is the explanatory? In a "designed experiment", e.g. a laboratory experiment or field plot experiment, the response and explanatory is usually obvious, but sometimes it is less obvious. Take the following examples:
+
+| Response | Explanatory | Explanatory type |
+|:---------:|:-----------:|:----------------:|
+| Plant pathogen gene regulation | Fungicide concentration (mg/l) | Continuous |
+| Mean bird population size | Habitat type (Garden, Arable, Woodland, Heath) | Categorical |
+| Pollinator diversity | Wildflower diversity | Continuous |
+
+All linear models have a continuous response variable. By "continuous" the response can be any number (3.4, 1.9, -3 etc., rather than Yes/No, Dead/Alive, or only whole numbers permitted). In the above 3 examples note the following:
+
+* the gene regulation has a continuous explanatory fungicide concentration
+* the average bird population at a site across all surveys has a categorical explanatory habitat type, **with four 'levels'** for the 4 different habitats
+* Pollinator diversity and wildflower diversity are both continuous. I think it is reasonable to assume that the biodiversity of wildflowers will have a big effect on the pollinators out there, so I've listed wildflower diversity as the explanatory variable. However, some scientists have shown that if the pollinator biodiversity declines sharply, this has a negative effect on the biodiversity of some wildflowers. So in this example the response and explanatory terms are a little more ambiguous.
+
+# **Regression**: Linear models with continuous explanatory variables
+Linear models with continuous explanatory variables are often called "regression analyses". If you have two or more continuous explanatory variables you may see them called "multiple regression".
+
+## Download data and calculate simple statistics
+We will start by looking at the `caterpillars` data set that we were using in the interactive website for linear models with continuous explanatory variables. The `caterpillars.csv` data file is available on Canvas and should be downloaded. Remember that this will end up in your "Downloads" folder: you will need to move it from Downloads into your BIO2020 folder before you can read it into R. After you have downloaded the file:
+
+* Open up the `caterpillars.csv` file in Microsoft Excel to have a quick look at it, but ignore any requests to save it in Excel format.
+* Start RStudio. Select **File -> Recent projects -> BIO2020** to open up the RStudio project you created in the first practical session.
+* Create a new R script: in RStudio select **File -> New File -> R Script**. It is good practice to save your script immediately by going to **File -> Save** and give it a sensible name, e.g. `Practical2.R`.
+
+Now start writing the contents of your script, with a title line, explanation of what your script is doing, etc. **Note**: some of you are storing all your CSV files in a `Data` subfolder, others are storing them in the main `BIO2020` folder. It does not matter which one you choose, but adjust the `read.csv()` call below accordingly:
+
+**Note**: Write a suitable comment after a `#` symbol at the top of your script to explain what it is going to do.
+* Write the line `library(bio2020)` in the script, and run it, to activate all the necessary add-on R packages.
+
+We need to load the data into R and store it in an object so we can access it easily.
+
+```{r}
+# Examples of linear models for continuous and categorical data
+
+# Activate the bio2020 R package
+library(bio2020)
+
+# Read in the caterpillars.csv file (omit Data/ if not using a CSV subfolder)
+caterpillar_dat <- read.csv("Data/caterpillars.csv")
+```
+
+If RGui or RStudio does not find the file `caterpillars.csv` check that you correctly copied the CSV from Downloads to BIO2020, that there are no spelling errors, or whether you need to omit the `Data/` if you are not using a subfolder called `Data` within the `BIO2020` folder.
+
+Using the functions that you learned in the first practical familiarise yourself with the `caterpillars` data. 
+
+```{r, eval= FALSE}
+# display the first 6 rows of the data frame
+head(caterpillar_dat)
+# check the dimensions of the data frame (numbers of rows and columns)
+dim(caterpillar_dat)
+```
+
+We can see that this data set contains 2 continuous variables; growth (mg/day) and tannin (mg). What is the mean, minimum, maximum value of these two variables (look back to Practical 1 if you have forgotten how to obtain these data).
+
+## Simple visualisation of caterpillar data
+In general it is a good idea to plot your data, to gain an understanding of its characteristics, before running a linear model. As you have two fairly simple variables, a scatter plot with our explanatory variable of tannin on the x axis and growth on the y axis will do. Obviously, for a report you would need to improve the axis labels etc.
+
+```{r echo = FALSE}
+gf_point(growth~tannin, data = caterpillar_dat)
+```
+
+From this plot answer the following questions and check with a demonstrator before continuing:
+
+ + Will the fitted line have an intercept? If it does, will it be positive or negative?
+ + If there is an intercept, roughly what do you think the value of the intercept is?
+ + Will the gradient of the fitted line be positive or negative?
+
+It is always worth doing this visualisation step. Sometimes you will see your scatter of points form a distinct curve, in which case your linear model might need both $x$ and $x^2$ explanatory variables to fit a curve rather than a straight line. It may seem odd that you can fit curves with linear models. The word "linear" simply refers to the fact that you add the various terms together.
+
+## Linear model (regression) of caterpillar growth data
+Now create a linear model (regression) to see if our expectations were correct. We can adapt the standard syntax for a linear model to indicate that it is using continuous explanatory variable (tannin)
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">regression</span> ( <span class="boxed">y</span> ~ <span class="boxed">continuous x</span> , data = <span class="boxed">mydata</span>, ... )</strong> 
+</h2></center>
+
+&nbsp;
+
+The syntax with the `lm()` function is the same:
+
+`lm(response_variable ~ continuous_explanatory_variable, data = dataframe_name)`
+
+Using this template, it is easy to create a linear model for the relationship between tannin and caterpillar growth using the `lm()` function, storing the output of the linear model in an R object called `growth_lm`:
+
+* we add a comment line beforehand to explain what we are doing
+* To the left of your ~ put your response variable, to the right the explanatory
+* use the `<-` symbols to assign the results of your linear model to `growth_lm`
+
+```{r, echo = TRUE}
+# Create a linear model to test relationship between growth and tannins
+growth_lm <- lm(growth ~ tannin, data = caterpillar_dat)
+```
+
+Now that you have created your linear model, use the `summary()` function to investigate the outputs of your linear model 
+
+```{r}
+# Check the output from the linear model
+summary(growth_lm)
+```
+
+Were your expectations correct? Using the summary information from your model answer the following questions:
+
+ + What is the intercept of the fitted line?
+ + What is the gradient of the fitted line?
+ + Is the relationship between the explanatory and response variable significant? 
+ + What proportion of the response value can be explained by the explanatory value?  <!--adjusted rsquared--> 
+ + Using the `sqrt()` function can you calculate the correlation coefficient between the variables? <!--sqrt(adjusted r2)-->
+ + Is the overall model significant?  <!--Fstatistc-->
+ + What are the p-values for the intercept and slope. How would you write them?
+
+Now some answers (please think about the above questions before reading these!!):
+
+ + The column headed 'Estimate' gives the estimated value of your intercept and slope. So your intercept is `11.756` which you were probably able to "guesstimate" by eye from the scatterplot as being around 12.0
+ + The slope is harder to guesstimate, and is `-1.217`. Notice that it is **negative** because the scatter of points **declines** from left to right on your graph
+ + You may know that R-squared ($R^2$) is the proportion of variation explained by your linear model. What is a little confusing is that two $R^2$ values are given, one called `Multiple` and the other `Adujusted`. Always refer to the `Adjusted R-squared` which is `0.789` i.e. almost 79% of the variation in caterpillar growth rate can be explained by tannin
+ + You can enter the `sqrt()` function directly in the Console. Again, used the adjusted $R^2$ which should give you a correlation coefficient of `0.888`. There is also a separate `cor()` function to calculate the correlation between any two variables should you need it.
+ + Overall model significance is shown by the F-statistic. The higher the F-statistic (30.97), the greater the "significance" of the model, which is reflected by a **lower** p-value (here p=0.0008461). You would write something like "Overall there was a significant negative relationship between caterpillar growth and tannin ($F_{1,7}$=30.97,p<0.001)". **Note**: by convention you provide the **degrees of freedom as subscripts** when reporting F-values, and **3 decimal places** when reporting p-values.
+  + The p-value for tannin is given as `0.000846` so to three decimal places it is `0.001`. But what about the p-value for the intercept? This is given as `9.54e-06`. This "exponential" format is a short-hand method of referring to very small numbers, using `e-` or very big numbers, using `e+`. So here we have a very small number, with six zeros, i.e. `0.00000954`. To three decimal places, this is zero, but in reality you **never have a p-value of zero**, there will always be a positive value. So by convention, to three decimal places you would report this as `p<0.001` which can be interpreted as "p is less than 0.001". This is highly significant, because the intercept is a long way from zero with a value of almost 12.
+  
+### Interactive demonstration of SS, slopes, intercepts
+You may find it useful to look at this [Interactive demonstration](https://naturalandenvironmentalscience.shinyapps.io/how_anova_works/#section-variances-with-continuous-explanatory-variables) of the tannin and caterpillar growth data, where you can see the sums of squares, and the effects of changing the amount of "noise" in your data.
+
+### A note on t-statistics
+You will see in the above summary table a column headed `t value`. A brief description of the rather strange t-distribution can be found on the first few pages of [this interactive website that includes t statistics](https://naturalandenvironmentalscience.shinyapps.io/Other_tests/) . The t-distribution is like a fat-tailed normal distribution, and of particular value is the one-sample t-test. This checks whether an estimated value, here your Intercept and slope, is different to zero. If the p-value is **low** then there is a **high probability** that your estimate is **not** zero.
+
+### How to write up the linear model in a report
+Unfortunately R is the same as most statistics packages, in that the way it reports data analyses is messy, and is not how you would present it in a report. The linear model you have just created is often called a **regression** because the explanatory variable (only one explanatory, `tannin` in this example) is continuous, not categorical. Which **two** of the following is the **correct** way of writing the analysis in a report and **why**? Check your answer with a demonstrator **before** continuing:
+
+a) The linear model showed a highly significant relationship between tannins (mg) and caterpillar growth (mg/day) with p < 0.05.
+b) The regression between tannins (mg) and caterpillar growth rate (mg/day) was significant (p=0.0008461) and explained 0.7893% variation in the data
+c) There was a strong negative relationship between tannins (mg) and growth rate (p<0.001)
+d) There was a negative relationship between tannin concentration (mg) and caterpillar growth rate (mg/day) (t = -5.565, p < 0.001) with 78.9% of the variation in growth rate explained by tannin concentration.
+e) The overall linear model for caterpillar growth rate (mg/day) and tannin concentration (mg) was significant and showed a negative relationship ($F_{1,7}$=30.97,p<0.001)
+ 
+## Plotting the fitted line
+
+You can add the fitted line from the linear model to your scatterplot using the `gf_lm()` function. Remember that when adding an extra feature layer to your plot you will need to use the pipe ` %>% ` which can be created using the keyboard shortcut <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>m</kbd> in the `practical2.R` script window.
+
+Using the lessons learned in the last practical can you improve the plot. First, add one extra lines using the `%>%` symbol to add the fitted line. Then a second to change the axis labels. Then a third to get rid of the grey background. Finally tweak the second line to change the colour of the fitted line. Re-run the lines of commands each time to watch your graph gradually improve in quality.
+
+1. Add a fitted line using `gf_lm()`
+2. Change the axis labels to "Tannin concentration" and "Caterpillar growth". Hint: `gf_labs()`
+3. Remove the grey plot background. Hint: `gf_theme()` with `theme_classic()`
+4. Change the colour of the fitted line to green. Hint: add a `colour=` option to `gf_lm()`
+
+Refer back to your script from the previous practical if you need a reminder of how to do this. To do the first of the four steps listed above you can add the fitted line with `gf_lm()`:
+
+```{r, eval=FALSE}
+gf_point(growth~tannin, data = caterpillar_dat) %>% 
+        gf_lm()
+```
+
+Edit the R code to modify the axis labels, replot your graph, then the modify the background etc. Replot your graph every time you tweak your code and it is easier to spot errors. You should end up with a graph similar to this:
+
+```{r echo = FALSE}
+gf_point(growth~tannin, data = caterpillar_dat) %>% 
+        gf_lm(colour = "green") %>% 
+        gf_labs(x = "Tannin concentration (mg)", y = "Caterpillar growth (mg/day)") %>% 
+        gf_theme(theme_classic())
+```
+
+If you have any problems producing the above plot then speak to a demonstrator. Also try the "minimal" theme. Once you have your R commands working, try changing `theme_classic()` to `theme_minimal()` to see the difference.
+
+
+## Calculate predicted values of growth for new values of tannin 
+
+You will remember from the online website tutorial that the fitted or "predicted" values for each of the observed tannin concentrations are those along the straight line that you have plotted using `gf_lm()` and that these values are stored in the model output under the `fitted.values` option which you can access by typing `growth_lm$fitted.values` once you have created your model object.
+
+You can calculate predicted growth values for **any** tannin concentration by using the information about the intercept and slope. Using the model that you have created calculate the fitted value for a caterpillar with a tannin level of **3.5**
+
+Use the **R Console** as a calculator to work out the predicted growth value when tannin is 3.5 using the formula:
+
+`intercept + (gradient * new value)`
+
+or given that you have a negative slope in your plot, that declines from left to right, you can think of it as:
+
+`intercept - (gradient * new value)`
+
+since the gradient is negative. You will need to go back to the output from `summary(growth_lm)` earlier to see the values for intercept and slope (re-run `summary(growth_lm)` if needed). The intercept and slope are shown under the `Estimate` column, on the rows headed `(Intercept)` and `tannin`. What value do you get for predicted growth rate with a tannin concentration of 3.5? Does it look sensible based on the line on your graph? 
+
+Having to enter the values for intercept and slopes manually into the R Console is a bit clunky, and it is easy to make errors, especially with more complex linear models that might have multiple explanatory variables. You will be relieved that we can automate the procedure using  the `makeFun()` function  to create our own special function which we will call `predictor`. The argument to `makeFun()` is simply the name of your linear model. Then you can put `3.5` into your new `predictor()` :
+
+```{r}
+growth_lm <- lm(growth~tannin, data = caterpillar_dat) 
+predictor <- makeFun(growth_lm)   # Make your own special predictor function
+predictor(3.5)                    # Predict the growth rate at tannin 3.5 mg
+```
+
+Is the value that you obtained from your `predictor` function the same as when you calculated it manually in the R Console? If the values are not exactly the same can you think why that might be? <!--rouding outputs from summary of model--> Hopefully you can see that the ability to create your own functions to predict values from any linear model is straightforward, and powerful.
+
+## Checking the assumptions of the linear model
+### Revision: what are linear model residuals and why do they matter?
+All models are simplifications of reality, and thus make various assumptions about your data. You will remember from the online interactive website tutorials [Checking model assumptions](https://naturalandenvironmentalscience.shinyapps.io/linear_explan/#section-checking-model-assumptions) that one of the key assumptions of linear models is that the residuals are from a normal distribution. Residuals are the "noise" in your data. In a 'perfect' set of data all your observations would fall exactly on the fitted line. But look at the graph with your fitted line: only one observation (tannin concentration 7.0) lies very close to the fitted line. The others are all slightly above or below the line. A normal distribution is a bell-shaped curve, so if the model is a good one, if you create a frequency histogram of the residuals you should see (roughly) that sort of curve. **Note**: "residuals" are sometimes referred to as "errors" and represented by the Greek letter Epsilon ($\epsilon$).
+
+Imagine instead of the 9 observations you have in your caterpillar dataset, you'd done a huge experiment with 100 caterpillars. The residuals above and below the line should average around zero, and produce a rough bell-shaped curve (**Note** as you only have 9 observations, you can't create this histogram):
+
+```{r, bell_curve-setup, echo=FALSE}
+set.seed(123)
+model_residuals <- rnorm(100)
+```
+```{r, bell_curve, echo=FALSE}
+gf_histogram(~model_residuals) %>% 
+  gf_labs(x = "Residuals from linear model") %>% 
+  gf_theme(theme_classic())
+```
+
+You can see from this frequency histogram that most of the 100 residual values are near to zero and that it forms a (very rough) bell-shaped curve.
+
+### Residuals from the caterpillar linear model
+You can extract the residuals using the `residuals()` function which takes the argument of your model object. 
+Assign the extracted residuals to a variable so that you can plot them.
+Plot a histogram of the residuals using the `gf_histogram()` function, remember when plotting a single variable you can use the formula `gf_histogram(~variable)` 
+You will note here that you don't need to specify the data because in this case the variable is stored as single numerical "vector" rather than a column within a table of data ("data frame").
+
+```{r}
+#Extract residuals and assign them to an object
+growth_resids <- residuals(growth_lm)
+gf_histogram(~growth_resids)
+```
+
+The main problem here is that you only have 9 observations, not 100, so it is very difficult just looking at a frequency histogram of the residuals to determine if they are normally distributed (bell-shaped curve). A more robust method of checking the distribution of the residuals is to use a QQ plot (quantile-quantile plot). This ranks your residuals from lowest to highest, and compares them with what would have been expected if your residuals are from a normal distribution.
+
+We can use the `gf_qq()` function to plot the sorted residuals and we can add a straight line showing the theoretical expectation using `gf_qqline()` function. The closer the points are to the straight line the more robust is your linear model.
+
+```{r}
+gf_qq(~growth_resids) %>%
+  gf_qqline()
+```
+
+Now you can see that even though we only have 9 data points, they fall very closely onto the dotted straight line. This indicates that the model assumptions have been met. **Note** The QQ plot is to check _model assumptions_. It is not used to test the statistical significance of individual explanatory variables, for which you need to look at the `summary()` output of the linear model.
+
+## Reporting data analyses and results
+Imagine you had done this caterpillar experiment as part of your final-year research project or on another module. How would you write up the "Data Analysis" part of your Methods? How would you write up your Results? Do a rough draft of what you might include and discuss it with a demonstrator.
+
+# **ANOVA**: Linear models with categorical explanatory variable
+When your linear model has categorical explanatory variables it is often called "Analysis of Variance" or ANOVA. If you have only one categorical explanatory, it might be called "One-Way ANOVA", with two categorical explanatory variables "Two-Way ANOVA" etc. Today you just have one explanatory.
+
+## Download and check the data
+Download `crop_growth.csv` from Canvas and open it in Excel to have a quick look at its contents (don't edit it - ignore any requests to save it in Excel format). Remember that you have to use File Explorer to copy it from your Downloads folder to your BIO2020. Depending on whether you are saving your CSV files in a `Data` subfolder, or keep them in your BIO2020 folder, adjust the following code. This imports the data, and allows you to look at its structure. Remember to **add comment lines** as shown below to help you when you look at your script when revising for your assessment in January. Execute each line sequentially as usual by hitting the <kbd>Ctrl</kbd>+<kbd>Enter</kbd> key combination. This may be shown as <kbd>Ctrl</kbd>+<kbd>  &#8629;  </kbd> on some keyboards:
+
+```{r, eval=FALSE}
+# Example linear model with categorical explanatory data; crop growth on
+# three different soil types.
+
+# Read the CSV file; omit Data/ if not using a subfolder
+crop_growth <- read.csv("Data/crop_growth.csv")
+
+# Gain an understanding of the dataset
+head(crop_growth)    # Shows the first few lines
+dim(crop_growth)     # Numbers of rows and columns
+summary(crop_growth) # Basic information
+```
+
+```{r, echo=FALSE}
+crop_growth <- read.csv("Data/crop_growth.csv")
+```
+
+
+The `summary()` function give minimum, maximum, mean, median values for the column of `yield` but the information on `soil` is simply listed as "character". This is a text variable. It is often easier when working with linear models to formally define this type of variable as a "factor" and it will then automatically show the individual "levels". This is not essential, but makes the output from `summary()` easier to interpret. As we only want to define `as.factor()` for the `soil` column, we make use of the `$` symbol to access just that column in the `crop_growth` table of data.
+
+```{r}
+# Convert the soil column from a character to a factor
+crop_growth$soil <- as.factor(crop_growth$soil)
+summary(crop_growth)
+```
+
+This is easier to understand. You can see that we have three soil types, `clay`, `loam` and `sand`, and 10 observations in each soil type. As we have the same number of observations in each soil type this is known as a "balanced" dataset which are generally easier to analyse.
+
+We have one continuous response variable `yield`, and one categorical explanatory variable `soil`, the latter with three "levels" for the different soil types.
+
+## Explore the data
+Let's start by calculating some summary statistics for each type of soil. 
+
+Remember that we can use a consistent syntax when working with summary statistics, of 
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">simple statistic</span> ( <span class="boxed">y</span> ~ <span class="boxed">x</span> , data = <span class="boxed">mydata</span>, ... )</strong> 
+</h2></center>
+
+&nbsp;
+
+where
+
+* y = response variable = crop yield
+* x = explanatory variable = soil type with 3 different levels, each 10 replicates
+* data = the `crop_growth` table (data frame) you have just imported into R
+
+Thus, to calculate the mean crop yield for each of the three different soil types, simply issue the command:
+
+```{r}
+mean(yield ~ soil, data = crop_growth)
+```
+
+Using the same idea, calculate the:
+
+ + minimum, maximum and standard deviation of the yield for each soil type;
+ + standard error of the yield for each soil type. **Hint**: look back at practical schedule 1 and [Standard Error website](https://naturalandenvironmentalscience.shinyapps.io/variation/#section-how-to-measure-accuracy-and-precision) to remind yourself how to calculate this. Conveniently, the number of replicates $n$ is the same for each soil type at 10.
+ 
+## Visualise your data
+When you are working with a categorical explanatory variable, a good starting point is a boxplot:
+
+```{r}
+# Visualise the crop yield data via a boxplot
+gf_boxplot(yield ~ soil, data = crop_growth)
+```
+
+This shows you that the yield data are reasonably well-spread around the median for all three soil types, although there are a couple of outlier observations for clay and sand. Now add two extra lines to the `gf_boxplot()` function to get a graph similar to the following:
+
+**Hints**:
+
++ Use `%>%` (the "pipe" or "then" command)
++ Use `gf_labs()` to modify x and y labels. **Always add units to axes if possible**
++ Use `gf_theme()` to modify the default grey background 
+
+```{r, echo=FALSE}
+gf_boxplot(yield ~ soil, data = crop_growth) %>% 
+  gf_labs(x = "Broad soil type", y = "Final crop yield (kg)") %>% 
+  gf_theme(theme_classic())
+```
+
+
+<!-- Now modify your plot to create a violin plot like the following. **Hints**: -->
+
+<!-- + Change `gf_boxplot()` to `gf_violin()` -->
+<!-- + add a new line `gf_sina()` to display the "jittered" observations -->
+<!-- + add `draw_quantiles = 0.5` to the `gf_violin()` function to draw a horizontal line to show the median (which is the 50% quantile). -->
+
+<!-- Remember to build up your extras one at a time, replotting after each change, so that it is easier to spot errors. Please speak to a demonstrator if you have problems. -->
+
+<!-- ```{r, echo = FALSE} -->
+<!-- gf_violin(yield~soil, data = crop_growth, draw_quantiles = 0.5) %>%  -->
+<!--   gf_sina() %>%  -->
+<!--   gf_labs(x = "Broad soil type", y = "Final crop yield (kg)") %>%  -->
+<!--   gf_theme(theme_classic()) -->
+<!-- ``` -->
+ 
+## Analyse and interpret the linear model 
+The format of the `lm()` function is identical syntax as with a continuous variable. We stick to our same basic template:
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">ANOVA</span> ( <span class="boxed">y</span> ~ <span class="boxed">categorical x</span> , data = <span class="boxed">mydata</span>, ... )</strong> 
+</h2></center>
+
+&nbsp;
+
+The syntax with the `lm()` function is the same:
+
+`lm(response_variable ~ categorical_explanatory_variable, data = dataframe_name)`
+
+We will save our results from the `lm()` function in an R objected called `soil_lm` and then use the `anova()` function which is conventional way of displaying the results of linear models with this type of structure:
+
+```{r, echo=TRUE, eval=FALSE}
+# Create linear model and store the results in soil_lm
+soil_lm <- lm(yield ~ soil, data = crop_growth)
+
+# Display the output of the linear model as an ANOVA table
+anova(soil_lm)
+```
+```{r, echo=FALSE, eval=TRUE}
+# Create linear model and store the results in soil_lm
+soil_lm <- lm(yield ~ soil, data = crop_growth)
+# Display the output of the linear model as an ANOVA table
+print(anova(soil_lm))
+```
+
+
+You might be wondering how we can test the effect of an explanatory variable using variances. Where are the variances in the above table!! (**Hint** If you looked at my Ten-Minute Video, you should know that a variance is a mean sums-of-squares). If you want a better understanding of how this works, and to play with an interactive that allows you to adjust the number of replicates and how noisy your data are, go to this [Interactive demo of crop yield data](https://naturalandenvironmentalscience.shinyapps.io/how_anova_works/#section-variances-with-categorical-explanatory-variables)
+You can see that the F-value is 4.2447 and the p-value is 0.02495. Which of the following best describes the results of the linear model? 
+
+a) The p-value is significant (p<0.05). This proves that soil type affects yield ($F$=4.2447)
+b) With a p-value of 0.02495 and $F$ of 4.245 there was a significant difference in yield with soil type.
+c) There was a highly significant effect of soil type on yield ($F$=4.245, p=0.025)
+d) There was a significant difference in crop yield in response to soil type ($F_{2,27}$=4.245, p=0.025)
+
+Which of the four is the best description of the results and why? Discuss your thoughts **with demonstrators and other students on the Microsoft Teams** channel for this practical (Section 2).
+
+You might be wondering why we used the `anova()` function rather than `summary()`. The latter can be a little confusing at first sight:
+
+```{r}
+summary(soil_lm)
+```
+
+**Comments**
+
+* The F-statistic and p-value printed at the end are identical to what you obtained with the `anova()` function and give the overall statistical significance of the model.
+* There are three numbers in the `Estimate` column, but only two soil types (loam and sand) are mentioned.
+* The estimate value of `11.500` may look familiar to you. What was the mean yield you calculated earlier for each of the three soil types? The `11.500` is for clay
+* R has put clay as a "baseline" to compare the others with, simply because when the three levels of `clay`, `loam` and `sand` are ordered automatically in alphabetical order, and the one first in the alphabet is used as a baseline. It is possible to manually change the baseline using the `relevel()` function, but this is rarely needed.
+* The estimates for loam and sand are actually the **differences** in yield for `loam` and `sand` compared to `clay`. Cross-check with your calculated means to confirm this is true.
+* The `anova()` and `summary()` functions do not provide an easy way of comparing each soil type with the other two soil types.
+
+
+## Multiple comparison tests
+To compare the differences between each soil type we actually need to do comparisons of:
+
+* clay vs loam
+* clay vs sand
+* loam vs sand
+
+We could break our data down into 3 smaller subsets, then re-run 3 separate linear models and check the results. There are two big problems with this:
+
+* It will be very time-consuming. If you have 4, 5 or 6+ categories (levels) in your categorical explanatory variable, the number of sub-comparisons you need to make rapidly becomes unmanagable.
+* The conventional level of statistical signficance is 0.05 or 1 in 20. So if your data are fairly random, with no experimental effect, but you end up doing 10 or more pairwise tests, you have a greater than 50:50 chance of mistakenly saying something is significant, when in reality it is not.
+
+What we need therefore is a way of easily doing multiple comparisons between each of our soil types (levels), without distorting the conventional p=0.05 statistic by running lots of separate linear models. **Multiple comparison tests** provide a solution, as it is a single test, which does all the separate comparisons, and automatically avoids mistakes in the calculation of your p-values. The most commonly used one is the **Tukey Honest Significant Difference** or HSD test:
+
+
+```{r}
+# Compare each soil type in turn with the others via pairwise tests
+TukeyHSD(soil_lm)
+```
+
+You have two sets of output here, one a table and the other a plot, but they both show the same information. First the table:
+
+* The column headed `diff` shows the difference in the mean crop yield for each comparison of soil types
+* The columns headed `lwr` and `upr` give the lower and upper 95% confidence intervals of this difference. See [Confidence Intervals](https://naturalandenvironmentalscience.shinyapps.io/variation/#section-confidence-intervals) on the Canvas website if you need a refresher
+* The column headed `p adj` gives the adjusted p-value for this mean, such that:
+    + if p is less than 0.05 then we assume that the difference between the two soil types being compared is statistically significant
+    + it is an "adjusted" p-value to automatically correct for the multiple tests (3 in this example) that are being done.
+
+```{r}
+# Plot the Tukey pairwise tests
+plot(TukeyHSD(soil_lm))
+```
+
+The plot of the Tukey HSD test shows the same information as the earlier table, but is easier to understand. The horizontal x-axis shows the differences in yield on each soil type +/- the 95% confidence intervals. If the line representing the 95% CI crosses zero then there isn't a difference in the mean yield. In both the Tukey table and plot you can see that the only significant pairwise difference is that between sand and loam, where the yield on sand is significantly lower than that on loam. The sand vs loam comparison is the only one where the **95% confidence intervals around the difference between the means does NOT overlap zero**. Look at your boxplot and/or violin plot earlier to help you understand this.
+
+## Check the assumptions of your linear model
+Just as you did with the earlier example for the caterpillar growth and the continuous explanatory variable, so you should check model assumptions by examining the residuals (errors) from your expectations. See if you can produce a QQ plot (quantile-quantile plot) of your residuals similar to the following:
+
+```{r, echo=FALSE}
+soil_resid <- residuals(soil_lm)
+
+gf_qq(~soil_resid) %>% 
+  gf_qqline()
+
+```
+
+As you can see, nearly all of the observed residuals fall nicely along the expected pattern of the residuals (centred around zero), suggesting that a key assumption of a linear model, that the residuals are roughly normally distributed, has been met.
+
+# Working with large biological datasets
+Modern biology and zoology generates big datasets that at first glance can be challenging to understand. Luckily, you can use the skills you've just learnt to summarise, visualise and analyse them. We will now do this with a dataset of over 300 observations!
+
+The data are morphological measures of three species of Antartica penguins, although we will initially focus on their body mass. Key things for you to answer:
+
+* What are typical body mass means for each species?
+* Is body mass explained by the species of penguin?
+* Are there differences in body mass between each pairwise comparison of species?
+
+Download the `penguins.csv` data set from Canvas and copy it to your `BIO2020` or `BIO2020/Data` folder. If you want, open it in Microsoft Excel to see what it contains. If you have not already done so, please look at [Interactive website on how to visualise data](https://naturalandenvironmentalscience.shinyapps.io/Summary_vis/) which uses this dataset as an example.
+
+Read in the dataset in the usual way via the `read.csv()` function, storing it in a table (data frame) called `penguins`.
+
+```{r, echo = TRUE}
+# Read in the CSV file. If not using a Data subfolder, then remove Data/
+penguins <- read.csv("Data/penguins.csv")
+
+```
+
+Using the methods described above, investigate the relationship between `body mass` and `species`, where species is the explanatory variable and body mass is the response variable. I'm not giving you the R code for this, but you have sufficient skills to do it!
+
+There are 5 things you must do:
+
+1. Produce a box plot to show the variation in body mass in the 3 species of penguin
+2. Create a linear model and summarise it. Is there a significant effect of species on body mass?
+3. Check the assumptions of your linear model
+4. If there is a significant difference, complete a Tukey Honest Significant Difference to look at the differences in body mass between each pair of species and plot it
+5. Interpret your results
+
+## Create the boxplot
+Use your skills to create the following boxplot:
+
+```{r, echo = FALSE}
+gf_boxplot(body_mass_g ~ species, data = penguins) %>% 
+  gf_labs(x = "Species of penguin", y = "Body mass (g)") %>% 
+  gf_theme(theme_classic())
+```
+
+## Linear model (ANOVA)
+This linear model will be an "ANOVA" since species is a categorical explanatory variable. Use it to see if species has a significant effect on body mass. **Hints**:
+
+* Use `lm()` function to create your linear model with the data stored in `penguins`. Think about which variable is your response, and which is your explanatory.
+* Store the results of your `lm()` function in `penguin_lm` by using the `<-` symbol
+* Display the analysis of variance of `penguin_lm` using the `anova()` function
+* Does species have a significant effect on body mass? How would you write the F and p-values in a written report **Hint**: not quite the same as shown in the table.
+
+The results of your linear model should be displayed as below:
+
+```{r, echo = FALSE}
+penguin_lm <- lm(body_mass_g~species, data = penguins)
+print(anova(penguin_lm))
+```
+
+
+## Check the assumptions of your analysis
+The "errors" or "residuals" which is the "unknown variation" from your analysis are assumed to come from a normal, or bell-shaped, distribution. You can check this by plotting them on a frequency histogram, and also a QQ plot.
+
+### Histogram plot hints
+
+* Use the `residuals()` function to extract the errors (unknown variation) from your fitted `penguin_lm`
+* Use `gf_histogram()` to display a frequency histogram of these residuals
+* After a `%>%` symbol, "then" add a line after `gf_histogram()` to modify the x-axis label using `gf_labs()`
+
+### QQ plot hints
+
+* use `gf_qq()` function with the residuals to display the QQ scatterplot of expected and predicted residuals
+* add a line after a `%>%` symbol with `gf_qqline()` to add the predictions. The closer the scatter of points to this line, the better the model assumptions have been met.
+
+```{r, echo=FALSE}
+p1 <- gf_histogram(~residuals(penguin_lm)) %>% 
+  gf_labs(x = "Linear model residuals")
+
+p2 <- gf_qq(~residuals(penguin_lm)) %>% 
+  gf_qqline()
+
+multi_plot(p1, p2, cols=2)
+
+```
+
+## How do species body mass differ between pairs?
+You have three species of penguin, and your ANOVA merely indicates that species type has an effect on body mass. It doesn't tell you if all three are different from each other, or if two of them are the same. Do a multiple comparison test to do pairwise comparisons in body mass between two species at a time. Which species are the same, and which differ? **Hint**: use the `TukeyHSD()` function with your `penguin_lm` model:
+
+```{r, echo = FALSE}
+TukeyHSD(penguin_lm)
+plot(TukeyHSD(penguin_lm))
+```
+
+## Interpretation
+How might you write up these results in a report? Compare your ANOVA and Tukey results to your boxplot. Also look at the BIO2020 Handbook and the last section on report-writing.

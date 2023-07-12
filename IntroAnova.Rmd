@@ -1,0 +1,345 @@
+---
+title: "Linear models with categorical explanatory variables"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(mosaic)
+crop_growth <- read.csv("www/crop_growth.csv")
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Introduction
+
+In the previous example we looked at linear models with a continuous explanatory
+variable, that is:
+
+$$growth = tannin + \epsilon$$
+where you will recall that
+
+* growth = growth of caterpillers
+* tannin = amount of tannin in the diet
+* $\epsilon$ (Greek letter epsilon) = *Error* or *Residual* which is due to 
+unknown noise in our experimental data.
+
+Often your single explanatory variable will be categorical, with two or more
+different categories, representing different treatments. Examples might include:
+
+| Response | Explanatory variable | Levels |
+|:--------:|:--------------------:|:------:|
+| Crop growth | Fertiliser | None (control), Nitrogen, Phosphorous, Potassium |
+| Biodiversity | Habitat | Woodland, Grassland, Scrub, Suburban |
+| qPCR amplification | Treatment | no DNA (-ve control), DNA template (+ve control),  DNA sample A, DNA sample B |
+
+Designed experiments, for example field trials or laboratory experiments, will
+often have a *Control* level, i.e. no treatment, whereas ecological surveys may
+not have a formal control. Note also that in some laboratory experiments you, such
+as the last example, you may have *negative controls*. In the last example you
+are wanting to extract the DNA of two samples (A and B), but you have two
+controls. The negative control is to check that your buffers etc. are not
+contaminated with DNA etc. and whilst your positive control uses a standard
+DNA sample where you know what you should expect to check the qPCR amplification
+is working properly.
+
+**Note:** 
+* When the explanatory variable is cateogrical it is often called a **factor** 
+and so you may see the term **factorial analysis** used in some books
+* The different categories in your explanatory variable are usually referred
+to as **levels**
+
+
+```{r background_check, echo=FALSE}
+question("Which one statement of the following is true?", type="learnr_checkbox",
+    answer("If you have categorical variables you must have a control",
+           message = "Not always, especially in field surveys"),
+    answer("The different categories in a factor are also known as 'levels'",
+           message = "Good. You may originally think of them as 'treatments' but
+           it is more accurate to call them 'levels", correct = TRUE),
+    answer("You can never have a control in an ecological survey",
+           message = "With careful planning it is sometimes possible. e.g. if
+           you are studying the effects of rabbit grazing on botany, you might
+           find a site where no rabbits are present, or fencing is used"),
+    answer("Categorical explanatory variables are also known as 'factors'",
+           message = "Good. For example, if you have two categorical explanatory variables you
+           may see it called '2-factor analysis'", correct=TRUE),
+    answer("If you do not apply a treatment it is always called a negative control",
+           message = "It is typically referred to simply as a 'control' unless
+           you have both positive and negative controls"),
+    answer("Negative controls help you check the robustness of your experimental procedures",
+           message = "Good. Using both +ve and -ve controls helps you check your procedures
+           are running as expected", correct = TRUE),
+    allow_retry = FALSE
+    )
+```
+
+
+## Example dataset
+
+The data come from an experiment into crop yields on three different soil types,
+sand, clay and loam, and as such this is an example where we have a categorical
+explanatory variable, with three levels (one for each of the three soil types),
+but no formal control. In the R session below, find out the name of the R object,
+look at the first 10 rows, check how many replicates there are for each of the
+soil types, and calculate the standard deviations for each soil type:
+
+```{r quick_check, exercise = TRUE, exercise.completion = FALSE}
+
+```
+<div id="quick_check-hint">
+**Hints:**
+
+* The `ls()` function can be used to find out the names of objects in R workspace
+* Simply type the name of an object to see all of it, or `head()` for the first part
+* Use `summary()` function to get the mean, min, max etc. of continuous variables for
+all the data. To break it down nicely per soil type use `favstats(response ~ 
+explanatory, data=datasetname)`
+* The function `sd(response ~ explanatory, data=datasetname)` and
+`tally(~explanatory, data=datasetname)` will display only standard errors and
+numbers of replicates respectively, for each soil type.
+</div>
+
+You can see that this is a **balanced** experiment in that there are the same
+number of replicates for each soil type. Sometimes, in both laboratory and field
+studies, data go "missing" for some replicates, but not others. This creates 
+**unbalanced** data which can be more complex to analyse.
+
+**Important:** When you ran the `summary()` function you may have noticed that
+it returned the minmum, 1st quartile, median, mean, 3rd quartile and maximum of
+the `yield` column. It did not do this for the `soil` column, as this is categorical.
+However, sometimes your categories might be coded as numbers rather than letters,
+and this will confuse R into misreading them as a continuous explanatory. You can
+correct this manually, but in general if you have categorical variables, always
+encode them with alphanumeric rather than purely numeric.
+
+```{r basic_stats, echo = FALSE}
+quiz(caption = "Stats summaries",
+  question("The values 14.3, 9.9 and 11.5 are the means for:", type="learnr_radio",
+           answer("clay, sand, loam"),
+           answer("sand, clay, loam"),
+           answer("clay, loam, sand"),
+           answer("sand, loam, clay"),
+           answer("loam, sand, clay", correct = TRUE),
+           random_answer_order = TRUE
+           ),
+  question("The number of replicates per soil type is:", type="learnr_radio",
+           answer("3, 3, 3"),
+           answer("9, 9, 9"),
+           answer("6, 6, 6"),
+           answer("10, 10, 10", correct = TRUE),
+           answer("30, 30, 30"),
+           random_answer_order = TRUE
+           )
+)
+```
+
+## Plotting your data
+
+Before analysing your data it is always useful to visualise them. One of the
+most useful ways of summarising your data when you have a categorical explanatory
+variable is via a *boxplot*. You can easily create one of these using the 
+`gf_boxplot()` function, which has the syntax:
+
+`gf_boxplot(response_variable ~ explanatory_variable, data=datasetname)`
+
+Try it now on your crop yield data
+
+```{r boxplot, exercise = TRUE, exercise.completion = FALSE}
+
+```
+<div id="boxplot-hint">
+**Hints:**
+* Make sure that you put the response variable on the left and the explanatory
+on the right of your equation
+* Use the `ls()` function if you've forgotten the name of your R dataset you
+want to plot. Use the `head()` function to look at the column names and first
+few rows of data.
+</div>
+
+### How to interpret a boxplot
+A boxplot is made up of several parts. The horizontal lines represent the
+**median** values for each of the three soil types (compare it with your data
+summaries earlier). The lower and upper parts of the box indicate the lower
+75th percentile and the upper 25th percentile. This is a complicated way of
+saying that **50% of your data occur within the range of the box**.  This is
+also known as the **interquartile range** or IQR. You can calculate the IQR via
+
+`iqr(response_variable ~ explanatory_variable, data = datasetname`
+
+The _**whiskers**_ are 1.5x the IQR. This basically indicates that virtually all
+your data are encompassed by the whiskers, which stretch (usually) from the 
+minimum to maximum values. However, occasionally there may be **outliers** in
+your data, which are indicated by one or more points above or below the whiskers.
+You can see that in your data there are outliers for clay and sand.
+
+### What to look for in a boxplot
+The main thing to check is that the spread of the data is **_roughly_** the same
+for each level of your explanatory data, i.e. that the boxes and whiskers are 
+fairly similar. You can see that in your data, they are all approximately the
+same size, even though the yield overall appears lower for sand. One assumption
+of a linear model is that the spread of values is roughly the same at each level.
+
+### Variations on a boxplot
+Two variations on boxplots have become popular in recent years:
+
+* Notch plots. You can create these with
+
+`gf_boxplot(response_variable ~ explanatory_variable, data = datsetname, notch = TRUE)`
+
+* Violin plots, created with
+
+`gf_violin(response_variable ~ explanatory_variable, data = datasetname)`
+
+Experiment with these alternatives in the R console above, and you will be
+familiar with them should you see them in any books, papers or lectures.
+
+## Analyse and interpret linear model
+Analysis of your data has the same syntax when the explanatory variable is
+categorical as when it is continuous, which you have already done. In the box
+below, analyse your data with the `lm` command, and summarise results using the
+`anova` command.
+
+```{r basic_lm, exercise = TRUE, exercise.completion = FALSE}
+
+```
+```{r basic_lm-solution}
+# Create the linear model
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+anova(crop_growth_lm)
+```
+
+You can see that against your explanatory variable of soil, there is an F-value
+of 4.2447 with 2 and 27 degrees of freedom, which is significant with a p-value
+of 0.02495. When writing up your experiment you would report this as
+
+* _"Soil type had a significant effect on crop yield (F<sub>2,27</sub>
+= 4.25, p = 0.025)"_
+
+Note how the F-value and p-value were both rounded to 3 signficant figures.
+
+Recall that the F-value gives an indication of the overall importance of an
+explanatory variable; the larger the F-value the more important.
+
+## What about the individual levels?
+Of course you are probably thinking "it's all very well knowing that the yield
+is affected by soil type, but I want to know about whether sand is different
+from loam etc.". There are two ways of doing this, one hard, one easy. We'll
+look at the harder one first. Re-create your linear model, but this time use
+`summary` to see the output:
+
+```{r lm_with_summary, exercise = TRUE, exercise.completion = FALSE}
+
+```
+```{r lm_with_summary-solution}
+# Create the linear model
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+summary(crop_growth_lm)
+```
+
+This table at looks very similar to the one from the `growth ~ tannin` example
+for the caterpillers dataset, where we had a continuous explanatory variable.
+What is a bit confusing are the labels for the rows:
+
+* `(Intercept)   11.500`
+* `soilloam       2.800`
+* `soilsand      -1.600`
+
+**Where has clay gone???**
+Look at the numbers again, and the first one might seem familiar from earlier.
+Check the means of the three soil types to see if you can work out what is 
+going on, with `mean(yield ~ soil, data = crop_growth)`
+
+The row labelled `(Intercept)` is actually the mean value for clay soils. The 
+other values are the differences from clay, so:
+
+* 11.500 + 2.800 = 14.3 = loam
+* 11.500 - 1.600 =  9.9 = sand
+
+**Why did it pick clay as the intercept?? **
+By default, R uses the level with the earliest letter of the alphabet as its
+"baseline" `(Intercept)` value to show as an overall mean. You can change this
+if you want to using the `relevel()` function, but it is rarely needed.
+
+### How to compare clay, loam and sand easily
+Whilst you can use the summary table to derive the information, it is not that
+easy to do so (some additional calculations are needed). A much simpler solution
+is to use what is amusingly known as the _Tukey Honest Significant Difference_
+test, or _Tukey HSD_ test. (Please don't ask me if Tukey also had a Dishonest
+Significant Difference test!!). This is available in R using the `TukeyHSD()`
+function which is called for you below:
+
+```{r tukey, exercise = TRUE, exercise.completion = FALSE}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+TukeyHSD(crop_growth_lm)
+plot(TukeyHSD(crop_growth_lm))
+```
+
+We have printed out both the table and the plot. The table shows the difference
+in yield for each soil type (2.8 for loam versus clay for example), followed by
+the 95% confidence intervals for that difference, and finally the p-value. For
+the first two comparisons, loam-clay and sand-clay, the 95% confidence intervals
+straddle zero, in other words the differnce in yield might not be important.
+However, for the sand-loam comparison, on the sand the yield is much lower than
+the loam (-4.4: compare with your boxplot). The 95% confidence intervals do not
+include zero, and so this difference is signficant with p=0.020
+
+This is obvious in the plot where you can see that it is only for the sand vs 
+loam difference that the error bars do not include zero.
+
+## Check model assumptions
+After looking at the results of your linear model, it is worth checking that
+the model assumptions are valid. Recall that linear models are of the format
+
+$$response\textrm{ }variable = explanatory\textrm{ }variable(s) + \epsilon$$
+where you will recall that the Greek letter $\epsilon$ (epsilon) represents the
+unknown variability, noise or residual error in your model. This noise has to be
+similar for all three soil types in your explanatory variable, and crucially, 
+should be normally (bell-shaped) if plotted in a frequency distribution.
+
+We can easily plot the frequency histogram using the `gf_histogram()` function.
+Go ahead and try it now. Remember that before you use the `gf_histogram()` function
+you will need to use the `residuals()` function to save the positive and 
+negative residuals from the model.
+
+```{r resid_histogram, exercise=TRUE, code.completion=FALSE}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+
+```
+```{r resid_histogram-solution}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+crop_growth_error <- residuals(crop_growth_lm)
+gf_histogram( ~ crop_growth_error)
+```
+
+As this dataset has 30 records (10 per soil type) it is easier to see that the
+frequency histogram approximates to a bell-shaped curve than with the tannins
+and growth example that only had 9 records. However, it is still best to check
+the QQ (quantile-quantile) plot of your residuals:
+
+```{r resid_qq, exercise=TRUE, code.completion=FALSE}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+
+```
+```{r resid_qq-hint-1}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+# remember to store your errors in an R object
+crop_growth_error <- residuals(crop_growth_lm)
+```
+```{r resid_qq-hint-2}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+crop_growth_error <- residuals(crop_growth_lm)
+# Use gf_qq to display the residuals ordered from lowest to highest
+gf_qq(~ crop_growth_error)
+```
+```{r resid_qq-hint-3}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+crop_growth_error <- residuals(crop_growth_lm)
+gf_qq(~ crop_growth_error) %>% 
+  gf_qqline() # Add the theoretical optimum line
+```
+
+Whilst there are a couple of outlier residuals (see your original boxplot of
+these data), it is clear that most of your residuals roughly follow a straight
+line so you can assume that the linear model is valid.
