@@ -2,11 +2,11 @@
 title: 'Practical 2: Linear models and ANOVA'
 author: "BIO2020"
 output:
-  word_document:
-    number_sections: yes
-  pdf_document: default
   html_document:
     df_print: paged
+    number_sections: yes
+  pdf_document: default
+  word_document:
     number_sections: yes
 ---
 
