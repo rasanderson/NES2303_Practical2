@@ -4,7 +4,7 @@ output: learnr::tutorial
 runtime: shiny_prerendered
 editor_options: 
   markdown: 
-    wrap: 72
+    wrap: 80
 ---
 
 ```{r setup, include=FALSE}
@@ -65,7 +65,7 @@ A linear model is one where any value of interest or response variable
 variables ($x$).
 
 ## Continuous explanatory variables
-
+### When might continuous variables occur?
 You will often have data in the form of a continuous response variable
 and a continuous explanatory variables. Examples might include:
 
@@ -82,6 +82,21 @@ you how to visualise data from these types of studies, undertake the
 appropriate analysis with a linear model, and learn how to interpret the
 analysis.
 
+### What do we mean by "cause and effect"?
+In the above examples it should be relatively obvious that some variables can 
+have an impact on others, but the reverse doesn't make biological sense. So if
+you have a laboratory experiment, you as the experimenter decide on e.g. 7
+different antibiotic doses to use, and that determines the relevant growth rate.
+The reverse, that the growth rate of bacteria determines how big a dose you
+decided to put into the Petri dish before you began the experiment, makes no
+logical sense. You'll see the terms "independent" and "dependent" also used to
+represent "cause" and "effect" respectively. Note that you do not need to know
+the exact mode of causation to identify your variables. The area of habitat
+available is know to affect species diversity, but several competing theories
+have been proposed to explain the mechanism.
+
+### What if I'm unsure what is the "
+
 **Note** Sometimes, typically in 'natural' surveys, it may not be
 obvious which is the response and which is the explanatory. For example,
 the numbers of predators and prey may be related at different sites, but
@@ -92,6 +107,7 @@ may be more appropriate.
 **Note** You will often see the type of linear model described in this
 tutorial as described as a **regression analysis** in many textbooks.
 
+## Plotting the data
 ### The data
 
 These are from a laboratory experiment to investigate the relationship
@@ -110,7 +126,6 @@ Note that in some books response variables will be called 'dependent',
 whilst explanatory variables will be called 'independent', so it is
 useful to be aware of both sets of terms.
 
-## Plotting the data
 
 The data for this have been stored in an dataframe called
 `caterpillers`. It is useful to plot these before proceeding.
