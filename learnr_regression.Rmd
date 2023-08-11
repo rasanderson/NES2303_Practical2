@@ -184,7 +184,7 @@ unknown noise in the data. This will improve the inferences you can make from
 your laboratory experiments and field surveys.
 
 
-## Plot your data before linear model
+## Data exploration
 ### The experimental data
 
 Here are some data from a laboratory experiment to investigate the relationship
@@ -220,11 +220,8 @@ question("What variables go on the x (horizontal) and y (vertical) axes?",
 )
 ```
 
-*Interactive R code exercise*
-
 Write the R code required calculate the means (averages) of the values
-in the `caterpillers` dataframe. What are the names of the columns? How
-many rows of data are there? Click the `hint` button if you get stuck.
+in the `caterpillers` dataframe. Click the `hint` button if you get stuck.
 
 ```{r basic_stats, exercise=TRUE, exercise.completion=FALSE}
   
@@ -232,10 +229,7 @@ many rows of data are there? Click the `hint` button if you get stuck.
 
 ::: {#basic_stats-hint}
 **Hint** Use the `ls()` function to see what is in your workspace, use
-the `summary()` function to get some basic statistics, use the `nrow()`
-or `dim()` function to get the number of rows, or rows and columns. To
-display the whole object simply type its name. To display the first few
-lines, use `head()`.
+the `summary()` function to get some basic statistics, that includes the averages.
 :::
 
 Now produce a scatterplot of the caterpiller growth rate (y-axis)
@@ -249,8 +243,8 @@ tend to follow a "formula" syntax.
 ```
 
 ```{r scatter_plot-solution}
-plot(growth ~ tannin, data=caterpillers)
-gf_point(growth ~ tannin, data=caterpillers)
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_theme(theme_classic())
 ```
 
 Imagine fitting a straight line to this scatter of points in your plot,
