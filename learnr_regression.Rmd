@@ -560,22 +560,47 @@ growth_predictor(7.12)
 ## Checking model assumptions
 
 ### Model assumptions
+All statistical tests have assumptions associated with them and we need to check whether our assumptions have been met so that we know we have undertaken the correct analysis and our subsequent inference from our statistical tests are valid. There are three key assumptions that you should always consider:
 
-One of the key assumptions about all linear models is that the
-**residuals** are from a **normal** distribution. So what do we mean by
-*residuals*? Look at the graph of your points and the fitted line from
-the model:
+* Normally distributed errors
+* Homogeneity of variance
+* Independence of replicates
+
+Most of these can be informally assessed by eye, or consideration of how you collected your data.
+
+#### **Normally distributed errors**
+We have already mentioned that your linear model has this structure:
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">Response</span> ~ <span class="boxed">Explanatory(s)</span> + <span class="boxed">Noise</span></strong> 
+</h2></center>
+
+&nbsp;
+ 
+but we have focussed entirely on the response and explanatory variables, we haven't talked about the errors. These are also called "residuals". They are the unknown "noise" from your model predictions as represented by the blue straight line, and the black data points of your observations:
 
 ```{r fitted_line_and_data, echo=FALSE}
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
 gf_point(growth ~ tannin, data=caterpillers) %>% 
-  gf_lm()
+  gf_lm() %>% 
+  gf_theme(theme_classic())
 ```
 
-Not all your observations fall exactly on the line, as sometimes they
-are slightly above, and sometimes below. Even if you do an amazingly
-good experiment, it is very unlikely that they will all fall exactly on
-the line. You will always have residuals.
+These errors (residuals) might be clearer to see if highlighted in red; they are the difference between your fitted and observed values. Note that some of the errors are positive (above the blue fitted line) and some are negative (below the line), and the sum of these errors will be zero:
+
+```{r fitted_line_and_data2, echo=FALSE}
+caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+fits <- caterpiller_lm$fitted.values
+
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_lm() %>% 
+  gf_segment(growth + fits ~ tannin + tannin, colour = "red") %>% 
+  gf_theme(theme_classic())
+```
+
+Not all your observations fall exactly on the line, as sometimes they are slightly above, and sometimes below. You can see that there is “noise” around the fitted line. The residual for each observation or data point is the difference between the predicted values of y (the line) and the observed value of y. Even if you do an amazingly good experiment, it is very unlikely that they will all fall exactly on the line. You will always have residuals. In some cases, extra explanatory variables can be added to the regression, which will explain more of the variation.
 
 ```{r residuals_basics, echo=FALSE}
 question("Which of the following statements is true?",
