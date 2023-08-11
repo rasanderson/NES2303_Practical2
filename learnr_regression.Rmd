@@ -771,3 +771,23 @@ Please avoid these common mistakes as you will lose marks!
 * P-values presented as 3.4124e-11 rather than p<0.001
 * "The regression proved that tannins affect growth" **Note** Never use
     'proved' in reports etc.
+
+## Summary and further reading
+### Key points learnt
+Hopefully you now have a good understanding of
+
+* Response and explanatory variables, and how to identify them
+* Basic concepts of a linear model
+* How to create a linear model, interpret its outputs, and check the assumptions
+that underly the model
+* Good practice for reporting your data science
+
+### Reading
+There is a lot of excellent material available at the Library and online.
+Particularly recommended are:
+
+* Experimental Design and Data Analysis for Biologists by Quinn and Keough Chapter 5
+* Getting Started with R Chapter 5
+* Zuur et al A protocol for data exploration to avoid common statistical problems (https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210X.2009.00001.x)  This is
+published in the main journal of the British Ecological Society - it is quite challenging in places
+but will give you a really good understanding.
