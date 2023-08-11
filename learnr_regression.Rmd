@@ -717,31 +717,57 @@ As you can see, your QQ plot points match very closely to the
 theoretical ideal of a straight line suggesting that your linear model
 is robust.
 
-## How to report your results
+## How to write up your analyses
 
-It is important to report the results of your linear model correctly.
-Here are some good and poor ways of doing so for these data:
+Your reports for most of your work, especially in Stage 3, are likely to have the
+following format:
 
-### Good
+* Abstract
+* Introduction
+* Methods
+* Results
+* Discussion
+* References
 
--   There was a significant negative relationship between growth and
-    tannin (t=-5.565, P \< 0.001) with 78.9% of the variability in
-    growth explained by tannin.
--   The overall linear model for tannins and growth was signficant
-    (F<sub>1,7</sub>=30.97, P \< 0.001)
+Look in the **NES2303 Course Handbook** on Canvas for some detailed advice on
+how to write reports especially if you find scientific writing hard. Here we
+focus on the Methods and Results
 
-### Poor
+### Methods
+This will have two or more sections, the first explaining the laboratry 
+procedures or field survey methods used. For a field survey, you might want to
+begin your Methods with a separate section to provide a site description.
+Whether you do a laboratoy or field-based study, the last section **must**
+contain an explanation of the data analyses used and software. For example:
 
--   The regression proved that tannins affect growth **Note** Never use
+"All laboratory data were initially recorded in Excel spreadsheets for each
+experiment. These were saved as .CSV files, and analysed in R 4.3 using linear
+models, to determine whether caterpiller diet had any impact on caterpiller
+growth rate. Linear model assumptions of normally-distributed errors were
+checked through the creation of quantile-quantile residual plots."
+
+### Results
+Results must **always** start with a paragraph of text. Do not start with a
+table, graph or similar. The text should cross-reference your Tables / Figures.
+Present your result in a factual, impartial way. For example: "There was a
+significant negative relationship between growth and tannin (Figure 1; t=-5.565,
+P \< 0.001) with 78.9% of the variability in growth explained by tannin (Table 1)."
+
+Ensure that Figure 1 (your scatterplot with fitted line) has a caption and is
+nicely formatted. You will **not** be able to use the output from your
+`summary(caterpiller_lm)` function as a direct copy-and-paste to create Table 1.
+**Always** retype the R output so it is properly formatted, with a sensible 
+number of decimal places. If reporting F-ratios, remember to include the 
+degrees of freedom as subscripts, e.g. "The overall linear model for tannins and
+growth was signficant (F<sub>1,7</sub>=30.97, P \< 0.001)"
+
+### Common bad practice when reporting Methods and Results
+Please avoid these common mistakes as you will lose marks!
+
+* Not mentioning data analyses in your Methods
+* Including Tables and Figures in the report, but not cross-referencing them
+* A Results section that consists entirely of Tables/Figures but no text
+* Too many decimal places from R output copied unedited
+* P-values presented as 3.4124e-11 rather than p<0.001
+* "The regression proved that tannins affect growth" **Note** Never use
     'proved' in reports etc.
--   The overall R<sup>2</sup> was 81.6%. **Note** Use Adjusted R-squared
-    of 78.9%
--   The results were significant with P=5.94e-06. **Note** For low
-    P-values report P \< 0.001
--   The results were significant with P\<0.001. **Note** you should
-    report the F- or t-statistic
--   Overall linear model was significant (F=30.97, P\<0.001). \*\*This
-    is a subtle error. Ideally you should give the *degrees of freedom
-    (see other tutorial)* as well as the F-statistic. See the second
-    bullet point above where you can see F<sub>1,7</sub> indicating 1
-    and 7 degrees of freedom.
