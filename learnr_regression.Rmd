@@ -437,9 +437,11 @@ in this linear model, so this p-value is identical to the one shown against the
 `tannin` row higher up in the output. Sometimes you will have multiple
 explanatory variables, and so the overall model p-value will differ.
 
-## Plotting the fitted line
+## Model predictions
 
-You now want to display your fitted line on your scatter of points.
+Our linear model indicated that the relationship between tannins and caterpiller growth rate is
+highly significant therefore it would be usefule to display the predictedl line
+from the linear model onto your scatter of points.
 Remember that your fitted line will have the same intercept and gradient
 as shown in your summary, with a negative gradient (slope) reflecting
 the decline from left to right. This is easiest to plot using the
@@ -448,7 +450,7 @@ the decline from left to right. This is easiest to plot using the
 known as a "pipe" operated in R, using the notation `%>%` which can be
 interpreted as the English word "then". So, in English you
 
--   Create a scatterplot, with growth as response, tanin as explanatory
+-   Create a scatterplot, with growth as response, tannin as explanatory
     **then**
 -   add the fitted line
 
@@ -456,7 +458,8 @@ which in R code is:
 
 ```{r show_fitted_plot, echo=TRUE, eval=FALSE}
 gf_point(growth ~ tannin, data=caterpillers) %>% 
-  gf_lm()
+  gf_lm() %>% 
+  gf_theme(theme_classic())
 ```
 
 Notice the symbol `%>%` at the end of the first line, which you should
@@ -464,9 +467,28 @@ read as "then". Try out these commands below. What happens if you run:
 
 `gf_lm(growth ~ tannin, data=caterpillers)`
 
+What is the effect of adding the argument `interval = "confidence"` to the `gf_lm()` function?
+
 ```{r plot_data, exercise=TRUE, exercise.completion=FALSE}
   
 ```
+```{r plot_data-solution}
+# Scatterplot with fitted line
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_lm() %>% 
+  gf_theme(theme_classic())
+
+# gf_lm simply produces the line
+gf_lm(growth ~ tannin, data=caterpillers) %>% 
+  gf_theme(theme_classic())
+
+# You can add standard error bands to the fitted line
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_lm(interval = "confidence") %>% 
+  gf_theme(theme_classic())
+
+```
+
 
 ### Obtaining the fitted values for input x-values
 
