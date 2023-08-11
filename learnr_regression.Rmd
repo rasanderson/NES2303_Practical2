@@ -581,7 +581,7 @@ We have already mentioned that your linear model has this structure:
  
 but we have focussed entirely on the response and explanatory variables, we haven't talked about the errors. These are also called "residuals". They are the unknown "noise" from your model predictions as represented by the blue straight line, and the black data points of your observations:
 
-```{r fitted_line_and_data, echo=FALSE}
+```{r fitted_line_and_data, echo=FALSE, warning=FALSE}
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
 gf_point(growth ~ tannin, data=caterpillers) %>% 
   gf_lm() %>% 
