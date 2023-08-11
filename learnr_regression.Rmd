@@ -10,6 +10,7 @@ editor_options:
 ```{r setup, include=FALSE}
 library(learnr)
 library(mosaic)
+library(ggpubr)
 caterpillers <- read.csv("www/regression.csv")
 knitr::opts_chunk$set(echo = FALSE)
 ```
@@ -95,17 +96,40 @@ the exact mode of causation to identify your variables. The area of habitat
 available is know to affect species diversity, but several competing theories
 have been proposed to explain the mechanism.
 
-### What if I'm unsure what is the "
-
-**Note** Sometimes, typically in 'natural' surveys, it may not be
-obvious which is the response and which is the explanatory. For example,
+### What if I'm unsure which variable is "cause" and which "effect"?
+Sometimes, typically in 'natural' surveys, it may not be
+obvious which is the causal (explanatory) and which is the affected (response)
+variable. For example,
 the numbers of predators and prey may be related at different sites, but
 they also change over time. You can still analyse these data using
 linear models, but be careful not to infer cause and effect. Correlation
-may be more appropriate.
+may be more appropriate. Correlation simply quantifies the strength of the
+relationship between two variables, but does not infer cause and effect. For 
+example:
 
-**Note** You will often see the type of linear model described in this
-tutorial as described as a **regression analysis** in many textbooks.
+```{r echo = FALSE}
+set.seed(123)
+a <- (1:30) + abs(rnorm(10)) * 2
+b1 <- a * 5 + abs(rnorm(30)) * 50
+b2 <- a * 5 + abs(rnorm(30)) * 165
+corr_dat <- data.frame(a = c(a, a), b = c(b1, b2), correl = c(rep("High", 30), rep("Low", 30)))
+
+ggplot(corr_dat, aes(x = a, y = b)) +
+  geom_point() +
+  stat_cor(label.x.npc = "left", label.y.npc = "top", r.accuracy = 0.001, p.accuracy = 0.001) +
+  xlab("Variable A") +
+  ylab("Variable B") +
+  facet_wrap(~ correl) +
+  theme_classic()
+```
+
+This plot shows the scatter between two variables, A and B, as measured by the
+correlation coefficient $R$, sometimes shown as $r$. The correlation coefficent
+goes from -1 (perfect negative correlation), to 0 (no correlation) through to 1
+(perfect positive correlation). In the above graph the scatter of points
+**increases** from left to right in both graphs so we have **positive** 
+correlation coefficients displayed. However, the correlation coefficient is much
+higher in the graph on the left, as the data are less noisy.
 
 ## Plotting the data
 ### The data
