@@ -310,8 +310,8 @@ summary(caterpiller_lm)
 
 You should see an output summary, with quite a lot of information in it,
 but there are only a small number of components that are critical, so
-don't be daunted! The next section shows you how to understand the
-`summary` tables.
+don't be daunted! The next section shows you how to understand the table
+output by the `summary()` command.
 
 ## How to interpret lm summary
 
