@@ -184,12 +184,17 @@ unknown noise in the data. This will improve the inferences you can make from
 your laboratory experiments and field surveys.
 
 
-## Plotting the data
-### The data
+## Plot your data before linear model
+### The experimental data
 
-These are from a laboratory experiment to investigate the relationship
+Here are some data from a laboratory experiment to investigate the relationship
 between caterpiller growth rates and the amount of tannins in their
-diet. Before you continue, answer the following question:
+diet. Tannins are produced by some plants to reduce attack by insects. They are
+what gives black tea its slightly bitter taste. The caterpillers were fed diets
+that contained different amounts of tannins (mg), and the caterpiller growth 
+rate (mg/day) measured.
+
+Before you continue, answer the following question:
 
 ```{r which_is_response, echo=FALSE}
 question("Which of the following statements is true?",
