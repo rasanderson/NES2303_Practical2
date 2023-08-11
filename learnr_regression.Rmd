@@ -363,14 +363,14 @@ Provides the standard errors for your estimates.
 ### fourth column `t value` gives the estimated statistic from the **t distribution**
 
 which is a statistical distribution (developed to improve the brewing of
-Guiness stout!).
+Guinness stout!).
 
 ### Fifth and final column, headed `Pr(>|t|)`
 
 This indicates "how likely you are to have obtained these values from a
-t-distribution according to the null hypothesis". That's very confusing!
+t-distribution according to the null hypothesis $H0$". That's very confusing!
 A simpler interpretation is "what is the probability of obtaining the
-estimated intercept and gradient if there was no relationship between
+estimated intercept and gradient if there was **no relationship** between
 caterpiller growth rate and tannin". Basically, the **lower** these
 **p-values** the **more important** the gradient and intercept.
 
@@ -409,22 +409,33 @@ The final three rows give:
 
 -   The residual standard error (don't worry about this for now)
 -   R-squared values (see below)
--   F-statistic and its p-value (see below)
+-   F-statistic, degrees of freedom, and p-value (see below)
 
-The R-squared value goes from zero to 1.0, and can be interpreted as a
+**The R-squared value** goes from zero to 1.0, and can be interpreted as a
 percentage. It indicates what proportion (or percentage) of your y
 (response) value can be explained by your x-value (explanatory). Two
 R-squared values are given, and always use the one headed
 `Adjusted R-squared`. You have a value of 0.7893 which means that almost
 79% of the variation in caterpiller growth can be explained by variation
-in tannin. **Note** The square root of the R-squared is the same as the
-correlation coefficient.
+in tannin.
 
-All linear models can produce an F-statistic. Here, this is an overall
+**F-statistics** can be produced by all linear models. Here, this is an overall
 one, for the (single) explanatory variable of tannin. As you only have
 one explanatory variable, your overall F-statistic has the same p-value
 as shown against tannin earlier on, of 0.000846. The larger the
-F-statistic, the more signficiant is the overall linear model.
+F-statistic, the more significant is the overall linear model.
+
+**Degrees of freedom (DF)** Two numbers are displayed for DF, 1 and 7. The first value,
+1, relates to the number of parameters being estimated, not counting the Intercept,
+which here is the slope of the line. The second is the number of observations (9)
+minus the number of parameters estimated (two, for the slope and intercept).
+
+**p-value** This is the overall probability of your null hypothesis $H0$ of no
+effect of tannins on growth being true. You can see that it is very low, so we
+can reject the null hypothesis. You only have one explanatory variable, `tannin`
+in this linear model, so this p-value is identical to the one shown against the
+`tannin` row higher up in the output. Sometimes you will have multiple
+explanatory variables, and so the overall model p-value will differ.
 
 ## Plotting the fitted line
 
