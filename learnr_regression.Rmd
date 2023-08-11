@@ -261,8 +261,27 @@ question("Which statements below are true?",
 ```
 
 ## Creating a linear model
+A linear model is used to test your null hypothesis $H0$  (it does not formally
+test your alternative hypothesis $HA$):
 
-The `lm()` function is used to analyse your data, with the standard
+* $H0$ = null hypothesis = probability that your explanatory variable has **no
+significant effect** on your response variable
+* $HA$ = alternative hypothesis = probability that your explanatory variable
+affects your response variable.
+
+This is a bit confusing, because you're probably more interested in $HA$ than in
+$H0$ but it does not matter. Your linear model will produce a **p-value** which is
+the probability of $H0$ being true. If your p-value is very low (less than 0.05)
+then we "reject" the null hypothesis. We thus "implicitly" accept the alternate
+hypothesis, even though we don't formally test it.
+
+For our caterpiller growth vs tannins dataset, our null hypothesis $H0$ would be
+"Tannins have no affect on caterpiller growth rate". Our linear model will allow
+us to accept this hypothesis if the probability of the hypothesis being true is
+greater than 5% (p > 0.05), or reject it if the probability of it being true is
+less than 5% (p < 0.05). The 0.05 cutoff is a scientific convention.
+
+The `lm()` function is used to create a linear model, with the standard
 syntax of
 
 `lm(response_variable ~ explanatory_variable, data=dataframe_name)`
@@ -272,6 +291,7 @@ object, so that you can summarise, display or use the results of your
 linear model:
 
 `lm_results <- lm(response_variable ~ explanatory_variable, data=dataframe_name)`
+`summary(lm_results)`
 
 In the R coding space below, create a linear model for your
 `caterpiller` data, making sure that you specify the response and
