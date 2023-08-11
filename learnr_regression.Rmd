@@ -15,6 +15,27 @@ caterpillers <- read.csv("www/regression.csv")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+<style type="text/css">
+span.boxed {
+  border:5px solid gray;
+  border-radius:10px;
+  padding: 5px;
+}
+span.invboxed {
+  border:5px solid gray;
+  padding: 5px;
+  border-radius:10px;
+  color: white;
+}
+table, td, th
+{
+border:0px;
+}
+</style>
+
+
+
+
 ## What are linear models?
 
 You will all be familiar with linear models already from school even if
@@ -130,6 +151,38 @@ goes from -1 (perfect negative correlation), to 0 (no correlation) through to 1
 **increases** from left to right in both graphs so we have **positive** 
 correlation coefficients displayed. However, the correlation coefficient is much
 higher in the graph on the left, as the data are less noisy.
+
+### Linear models quantify cause and effect
+In most of your studies you are likely to have a good understanding of which
+are your explanatory and response variables. This is particularly going to arise
+when you develop **hypothesis-driven** research questions, both for laboratory
+and field research. This approach as allowed all areas of science to develop
+most rapidly, and if you have good, well-defined research questions you will
+find it easier to develop you data collection / field surveys to a high standard
+and know how to analyse and interpret your findings.
+
+Linear models assume the basic structure of:
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">Response</span> ~ <span class="boxed">Explanatory(s)</span> + <span class="boxed">Noise</span></strong> 
+</h2></center>
+
+&nbsp;
+
+There are two components here:
+
+* **Signal** = impact of your explanatory variable(s) on your response
+* **Noise**  = unknown variation in your data
+
+All linear models measure the signal to noise ratio. The **lower** you can make
+the noise the more likely you will be able to detect the effects of your
+explanatory variables. You can reduce the noise by changes in your experimental/
+field survey design, and also what assumptions you make about the characteristics of the
+unknown noise in the data. This will improve the inferences you can make from
+your laboratory experiments and field surveys.
+
 
 ## Plotting the data
 ### The data
