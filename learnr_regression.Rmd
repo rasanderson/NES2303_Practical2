@@ -440,7 +440,7 @@ explanatory variables, and so the overall model p-value will differ.
 ## Model predictions
 
 Our linear model indicated that the relationship between tannins and caterpiller growth rate is
-highly significant therefore it would be usefule to display the predictedl line
+highly significant therefore it would be usefule to display the predicted line
 from the linear model onto your scatter of points.
 Remember that your fitted line will have the same intercept and gradient
 as shown in your summary, with a negative gradient (slope) reflecting
@@ -492,7 +492,7 @@ gf_point(growth ~ tannin, data=caterpillers) %>%
 
 ### Obtaining the fitted values for input x-values
 
-The fitted or "predicted" values are those along your straight line. For
+The fitted or "predicted" values are those along your straight line, which you have just plotted. For
 the 9 values of tannin, these are stored in the model output, under the
 `fitted.values` option which you can access by typing
 `caterpiller_lm$fitted.values` after you have created your linear model.
@@ -503,6 +503,12 @@ to 9. Compare it with the graph you created earlier.
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
 
 ```
+```{r lm_fitted-solution}
+caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+model_fitted_values <- caterpiller_lm$fitted.values
+model_fitted_values
+```
+
 
 ### Fitted for new input x-values
 
@@ -517,6 +523,10 @@ tannin, that was not in your original dataset. For example, tannin at
 2.  Create a function, using `makeFun`, derived from your model, to
     predict the results. This is more flexible, especially with complex
     models.
+
+In the next code-box we create our own command function called `predictor` into
+which we can enter a single tannin value (`4.36`) or the tannin values 1 to 10
+via the shortcut `1:10`:
 
 ```{r lm_makeFun, echo=TRUE}
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
@@ -536,6 +546,15 @@ it `predictor`).
 
 ```{r lm_makeFun2, exercise=TRUE}
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+```
+```{r lm_makeFun2-solution}
+caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+
+# Create your prediction function. Let's call it growth_predictor
+growth_predictor <- makeFun(caterpiller_lm)
+
+# Now predict the growth rate at e.g. tannin 7.12 mg
+growth_predictor(7.12)
 ```
 
 ## Checking model assumptions
