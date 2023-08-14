@@ -221,7 +221,7 @@ crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
 summary(crop_growth_lm)
 ```
 
-This table at looks very similar to the one from the `growth ~ tannin` example
+This table looks very similar to the one from the `growth ~ tannin` example
 for the caterpillers dataset, where we had a continuous explanatory variable.
 What is a bit confusing are the labels for the rows:
 
@@ -266,10 +266,25 @@ the first two comparisons, loam-clay and sand-clay, the 95% confidence intervals
 straddle zero, in other words the differnce in yield might not be important.
 However, for the sand-loam comparison, on the sand the yield is much lower than
 the loam (-4.4: compare with your boxplot). The 95% confidence intervals do not
-include zero, and so this difference is signficant with p=0.020
-
-This is obvious in the plot where you can see that it is only for the sand vs 
+include zero, and so this difference is signficant with p=0.020. This is obvious
+in the plot where you can see that it is only for the sand vs 
 loam difference that the error bars do not include zero.
+
+### Writing up Tukey HSD results
+When you report what you've done, you need to explain your multiple comparison
+tests in both your Methods and Results, for example:
+
+**Methods**
+"After testing for the effects of soil type on crop yield, potential differences
+between individual soil types on yield with assessed via pairwise Tukey multiple
+comparison tests (Tukey Honest Significant Difference, HSD, tests)"
+
+**Results**
+"Crop yield was significantly higher (4.40 kg/ha) on loam than sand soils 
+(Tukey HSD p = 0.0204). There was no difference in mean crop yield on loam vs
+clay (p = 0.179) or sand vs clay (p = 0.555)." You could also present the results
+of your Tukey HSD test in a figure or table, but remember to cross-reference 
+them from the text.
 
 ## Check model assumptions
 After looking at the results of your linear model, it is worth checking that
