@@ -245,7 +245,16 @@ gf_point(growth~tannin, data = caterpillar_dat) %>%
         gf_theme(theme_classic())
 ```
 
-If you have any problems producing the above plot then speak to a demonstrator. Also try the "minimal" theme. Once you have your R commands working, try changing `theme_classic()` to `theme_minimal()` to see the difference.
+We need to illustrate some form of uncertainty around the regression line. The most appropriate method is to add the 95% confidence intervals around the fitted line. We can do this by editing the `gf_lm()` function by adding `interval = "confidence", level = 0.95` to the brackets. When you replot your figure, you will see a grey band appear around the line. This represents the range in which the true regression line can be plotted. In other words, any intercept and slope is potentially possible within this grey area.
+
+```{r echo=FALSE}
+gf_point(growth~tannin, data = caterpillar_dat) %>% 
+        gf_lm(colour = "green", interval = "confidence", level = 0.95) %>% 
+        gf_labs(x = "Tannin concentration (mg)", y = "Caterpillar growth (mg/day) +/- 95% CI") %>% 
+        gf_theme(theme_classic())
+```
+
+If you have any problems producing the above plot then speak to a demonstrator. Do not continue unless you have completed this step successfully, and confirmed with a demonstrator that you understand the output.
 
 
 ## Calculate predicted values of growth for new values of tannin 
