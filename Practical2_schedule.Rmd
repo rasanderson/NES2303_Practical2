@@ -487,7 +487,7 @@ b) With a p-value of 0.02495 and $F$ of 4.245 there was a significant difference
 c) There was a highly significant effect of soil type on yield ($F$=4.245, p=0.025)
 d) There was a significant difference in crop yield in response to soil type ($F_{2,27}$=4.245, p=0.025)
 
-Which of the four is the best description of the results and why? Discuss your thoughts **with demonstrators and other students on the Microsoft Teams** channel for this practical (Section 2).
+Which of the four is the best description of the results and why? Discuss your thoughts **with demonstrators and your fellow students**.
 
 You might be wondering why we used the `anova()` function rather than `summary()`. The latter can be a little confusing at first sight:
 
