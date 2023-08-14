@@ -33,6 +33,7 @@ different categories, representing different treatments. Examples might include:
 | Crop growth | Fertiliser | None (control), Nitrogen, Phosphorous, Potassium |
 | Biodiversity | Habitat | Woodland, Grassland, Scrub, Suburban |
 | qPCR amplification | Treatment | no DNA (-ve control), DNA template (+ve control),  DNA sample A, DNA sample B |
+| Marine macrophyte cover | Tidal position | Low-, medium- and high-shore |
 
 Designed experiments, for example field trials or laboratory experiments, will
 often have a *Control* level, i.e. no treatment, whereas ecological surveys may
@@ -44,7 +45,8 @@ contaminated with DNA etc. and whilst your positive control uses a standard
 DNA sample where you know what you should expect to check the qPCR amplification
 is working properly.
 
-**Note:** 
+### Note 
+
 * When the explanatory variable is cateogrical it is often called a **factor** 
 and so you may see the term **factorial analysis** used in some books
 * The different categories in your explanatory variable are usually referred
