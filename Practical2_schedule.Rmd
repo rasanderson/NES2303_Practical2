@@ -1,5 +1,5 @@
 ---
-title: 'Practical 2: Linear models and ANOVA'
+title: 'Practical 2: Getting started with Linear models'
 author: "BIO2020"
 output:
   html_document:
@@ -38,7 +38,6 @@ library(dplyr)
 library(palmerpenguins)
 library(ggformula)
 library(mosaic)
-library(bio2020)
 ```
 
 # Introduction
@@ -90,7 +89,7 @@ All linear models have a continuous response variable. By "continuous" the respo
 * the average bird population at a site across all surveys has a categorical explanatory habitat type, **with four 'levels'** for the 4 different habitats
 * Pollinator diversity and wildflower diversity are both continuous. I think it is reasonable to assume that the biodiversity of wildflowers will have a big effect on the pollinators out there, so I've listed wildflower diversity as the explanatory variable. However, some scientists have shown that if the pollinator biodiversity declines sharply, this has a negative effect on the biodiversity of some wildflowers. So in this example the response and explanatory terms are a little more ambiguous.
 
-# **Regression**: Linear models with continuous explanatory variables
+# Linear models with continuous explanatory variables: Regression
 Linear models with continuous explanatory variables are often called "regression analyses". If you have two or more continuous explanatory variables you may see them called "multiple regression".
 
 ## Download data and calculate simple statistics
@@ -110,10 +109,10 @@ We need to load the data into R and store it in an object so we can access it ea
 ```{r}
 # Examples of linear models for continuous and categorical data
 
-# Activate the bio2020 R package
-library(bio2020)
+# Activate the mosaic R package
+library(mosaic)
 
-# Read in the caterpillars.csv file (omit Data/ if not using a CSV subfolder)
+# Read in the caterpillars.csv file (omit Data/ if not using a subfolder to store data)
 caterpillar_dat <- read.csv("Data/caterpillars.csv")
 ```
 
@@ -591,13 +590,11 @@ The "errors" or "residuals" which is the "unknown variation" from your analysis 
 * add a line after a `%>%` symbol with `gf_qqline()` to add the predictions. The closer the scatter of points to this line, the better the model assumptions have been met.
 
 ```{r, echo=FALSE}
-p1 <- gf_histogram(~residuals(penguin_lm)) %>% 
+gf_histogram(~residuals(penguin_lm)) %>% 
   gf_labs(x = "Linear model residuals")
 
-p2 <- gf_qq(~residuals(penguin_lm)) %>% 
+gf_qq(~residuals(penguin_lm)) %>% 
   gf_qqline()
-
-multi_plot(p1, p2, cols=2)
 
 ```
 
