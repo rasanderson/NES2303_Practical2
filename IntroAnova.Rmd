@@ -357,3 +357,21 @@ gf_boxplot(residuals(crop_growth_lm) ~ crop_growth$soil) %>%
 
 The residuals are all roughly centred around zero, and the spread of values,
 especially of the boxes (which encompass 50% of the data) are similar sizes.
+
+## Summary
+You have now seen how to use linear models with categorical explanatory variables.
+Key take-home messages are:
+
+* Always visualise your data with boxplots, to check for homogeneity of variance
+* Structure of your linear model is unchanged, it is simply that your 
+explanatory variable now has categorical levels in it
+* Use multiple comparison tests such as Tukey HSD to check for "between-level"
+differences
+* Remember to check model assumptions
+
+### Further reading
+
+* Experimental Design and Data Analysis for Biologists. Chapter 8 covers one-way ANOVA
+(print copy only)
+* Getting started with R: and introduction for Biologists. [Chapter 5](https://libsearch.ncl.ac.uk/permalink/f/1kstl9b/NCL_ALMA21119160920002411) 
+contains advice on ANOVA (online version available)
