@@ -324,6 +324,22 @@ gf_qq(~growth_resids) %>%
 
 Now you can see that even though we only have 9 data points, they fall very closely onto the dotted straight line. This indicates that the model assumptions have been met. **Note** The QQ plot is to check _model assumptions_. It is not used to test the statistical significance of individual explanatory variables, for which you need to look at the `summary()` output of the linear model.
 
+The second assumption that we need to check is that we have equal spread of residuals around the regression line. That is the residuals do not get bigger or smaller as the fitted values change. We can do this by "plotting" the lm object. This is give us a series of plots but we are only interested in in the first two.
+
+```{r echo=TRUE, eval=FALSE}
+par(mfrow=c(1,2)) # sets two plots side-by-side in the Plots tab in RStudio
+plot(growth_lm, which =1:2) # plots the first two diagnostic plots from the lm object
+par(mfrow=c(1,1)) # sets the plotting window back to just one plot
+```
+
+```{r echo=FALSE}
+par(mfrow=c(1,2)) # sets two plots side-by-side in the Plots tab in RStudio
+plot(growth_lm, which =1:2) # plots the first two diagnostic plots from the lm object
+par(mfrow=c(1,1)) # sets the plotting window back to just one plot
+```
+
+Firstly, we can see the qq-plot again on the right hand side. This follows the same pattern as the one we plotted a minute a go so we can just ignore it. The plot on the left hand side shows our residuals vs fitted values and we can see that these are roughly symmetrical around 0. This would indicate that we have no systematic change in the residuals along the fitted values.
+
 ## Reporting data analyses and results
 Imagine you had done this caterpillar experiment as part of your final-year research project or on another module. How would you write up the "Data Analysis" part of your Methods? How would you write up your Results? Do a rough draft of what you might include and discuss it with a demonstrator.
 
