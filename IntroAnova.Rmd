@@ -47,7 +47,7 @@ is working properly.
 
 ### Note 
 
-* When the explanatory variable is cateogrical it is often called a **factor** 
+* When the explanatory variable is categorical it is often called a **factor** 
 and so you may see the term **factorial analysis** used in some books
 * The different categories in your explanatory variable are usually referred
 to as **levels**
@@ -78,14 +78,17 @@ question("Which one statement of the following is true?", type="learnr_checkbox"
 ```
 
 
-## Example dataset
+## Understanding your data
 
-The data come from an experiment into crop yields on three different soil types,
-sand, clay and loam, and as such this is an example where we have a categorical
-explanatory variable, with three levels (one for each of the three soil types),
-but no formal control. In the R session below, find out the name of the R object,
-look at the first 10 rows, check how many replicates there are for each of the
-soil types, and calculate the standard deviations for each soil type:
+TWe are going to look at a data set that includes a categorical explanatory variable. The data come from an experiment into crop yields on three different soil types, sand, clay and loam. Soil type is the categorical explanatory variable, with three levels (one for each of the three soil types), but in this case we have no formal control. The aim is to look at the differences in crop yield among the three levels. We could formulate a hypothesis to test along the lines of:
+
+*"There is a significant difference in crop yields among the crop types."*
+
+Our linear model does a formal test to accept our null hypothesis. This gives us a null hypothesis of:
+
+*"There is no significant differences in crop yields among the crop types."*
+
+First of all lets start by finding out more about our data. We will be using a dataframe called "crop_growth" which includes one explanatory and one response variable. In the R session below, find out the name of the R object ls(), look at the first 10 rows head(), check how many replicates there are for each of the soil types nrow(), and calculate the standard deviations for each soil type. if you get stuck, look at the hint for more details.
 
 ```{r quick_check, exercise = TRUE, exercise.completion = FALSE}
 
@@ -99,7 +102,7 @@ soil types, and calculate the standard deviations for each soil type:
 all the data. To break it down nicely per soil type use `favstats(response ~ 
 explanatory, data=datasetname)`
 * The function `sd(response ~ explanatory, data=datasetname)` and
-`tally(~explanatory, data=datasetname)` will display only standard errors and
+`tally(~explanatory, data=datasetname)` will display only standard deviations and
 numbers of replicates respectively, for each soil type.
 </div>
 
