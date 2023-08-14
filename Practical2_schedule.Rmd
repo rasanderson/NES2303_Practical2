@@ -130,10 +130,17 @@ dim(caterpillar_dat)
 We can see that this data set contains 2 continuous variables; growth (mg/day) and tannin (mg). What is the mean, minimum, maximum value of these two variables (look back to Practical 1 if you have forgotten how to obtain these data).
 
 ## Simple visualisation of caterpillar data
-In general it is a good idea to plot your data, to gain an understanding of its characteristics, before running a linear model. As you have two fairly simple variables, a scatter plot with our explanatory variable of tannin on the x axis and growth on the y axis will do. Obviously, for a report you would need to improve the axis labels etc.
+It is essential to plot your data, to gain an understanding of its characteristics, before running a linear model. As you have two fairly simple variables, a scatter plot with our explanatory variable of tannin on the x axis and growth on the y axis is required. Before proceeding, do the following:
+
+* Use the `gf_point()` function to create your scatterplot with `tannin` on the x-axis (explanatory) and `growth` on the y-axis (response)
+* Add a second row to your R code with command `gf_labs()` to label the x- and y-axes as shown below. Us `%>%` at the end of the preceding line so that the gf_labs() command is actioned
+* Add a third row to your R code to change the theme from the nasty grey background etc. using `gf_theme()`, remembering to add `%>%` to the end of the second row.
+* Your graph should appear as shown below. Check with a demonstrator to ensure you have done it correctly. Look at your script from _Practical 1 Data visualisation_ for futher reminders:
 
 ```{r echo = FALSE}
-gf_point(growth~tannin, data = caterpillar_dat)
+gf_point(growth~tannin, data = caterpillar_dat) %>% 
+  gf_labs(x = "Dietary tannin (mg)", y = "Caterpillar growth rate (mg/day)") %>% 
+  gf_theme(theme_classic())
 ```
 
 From this plot answer the following questions and check with a demonstrator before continuing:
