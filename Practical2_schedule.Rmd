@@ -367,7 +367,7 @@ crop_growth <- read.csv("Data/crop_growth.csv")
 ```
 
 
-The `summary()` function give minimum, maximum, mean, median values for the column of `yield` but the information on `soil` is simply listed as "character". This is a text variable. It is often easier when working with linear models to formally define this type of variable as a "factor" and it will then automatically show the individual "levels". This is not essential, but makes the output from `summary()` easier to interpret. As we only want to define `as.factor()` for the `soil` column, we make use of the `$` symbol to access just that column in the `crop_growth` table of data.
+The `summary()` function gives minimum, maximum, mean, median values for the column of `yield` but the information on `soil` is simply listed as "character". This is a text variable. It is often easier when working with linear models to formally define this type of variable as a "factor" and it will then automatically show the individual "levels". This is not essential, but makes the output from `summary()` easier to interpret. As we only want to define `as.factor()` for the `soil` column, we make use of the `$` symbol to access just that column in the `crop_growth` table of data.
 
 ```{r}
 # Convert the soil column from a character to a factor
