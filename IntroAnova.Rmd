@@ -142,9 +142,7 @@ quiz(caption = "Stats summaries",
 
 ## Plotting your data
 
-Before analysing your data it is always useful to visualise them. One of the
-most useful ways of summarising your data when you have a categorical explanatory
-variable is via a *boxplot*. You can easily create one of these using the 
+It is essential to visualise your data **before** you analyse thems o that you can see any trends and begin to identify patterns. One of the most useful ways of summarising your data when you have a categorical explanatory variable is via a boxplot. This is because a boxplot provides valuable information about the distribution, spread and central tendency of your data. You can easily create one of these using the 
 `gf_boxplot()` function, which has the syntax:
 
 `gf_boxplot(response_variable ~ explanatory_variable, data=datasetname)`
@@ -154,14 +152,12 @@ Try it now on your crop yield data
 ```{r boxplot, exercise = TRUE, exercise.completion = FALSE}
 
 ```
-<div id="boxplot-hint">
-**Hints:**
-* Make sure that you put the response variable on the left and the explanatory
-on the right of your equation
-* Use the `ls()` function if you've forgotten the name of your R dataset you
-want to plot. Use the `head()` function to look at the column names and first
-few rows of data.
-</div>
+```{r boxplot-solution}
+# Visualisation of data with boxplot
+gf_boxplot(yield ~ soil, data = crop_growth) %>% 
+  gf_theme(theme_classic())
+```
+
 
 ### How to interpret a boxplot
 A boxplot is made up of several parts. The horizontal lines represent the
@@ -180,25 +176,7 @@ your data, which are indicated by one or more points above or below the whiskers
 You can see that in your data there are outliers for clay and sand.
 
 ### What to look for in a boxplot
-The main thing to check is that the spread of the data is **_roughly_** the same
-for each level of your explanatory data, i.e. that the boxes and whiskers are 
-fairly similar. You can see that in your data, they are all approximately the
-same size, even though the yield overall appears lower for sand. One assumption
-of a linear model is that the spread of values is roughly the same at each level.
-
-### Variations on a boxplot
-Two variations on boxplots have become popular in recent years:
-
-* Notch plots. You can create these with
-
-`gf_boxplot(response_variable ~ explanatory_variable, data = datsetname, notch = TRUE)`
-
-* Violin plots, created with
-
-`gf_violin(response_variable ~ explanatory_variable, data = datasetname)`
-
-Experiment with these alternatives in the R console above, and you will be
-familiar with them should you see them in any books, papers or lectures.
+The main thing to check is that the spread of the data is roughly the same for each level of your explanatory data, i.e. that the boxes and whiskers are fairly similar and whether the horizontal line is close to the center of the box. Checking the boxplot allows you to assess an important assumption of a linear model which is that the variance is roughly the same at each level. Looking at the spread of data in the boxplots gives us an approximation of whether we have equal variances across the levels. We refer to the equal spread of data across each of the levels as **homogeneity of variance**. If this spread is not equal when comparing among the levels within the categorical variable, we refer to it as **heterogeneity of variance**. There are formal statistical tests which can be used to assess homogeneity of variance but these can be biased by low sample size. In this example, you can see that in your data, they are all approximately the same size, even though the yield overall appears lower for sand. Therefore, we can say that there is homogeneity of variance..
 
 ## Analyse and interpret linear model
 Analysis of your data has the same syntax when the explanatory variable is
