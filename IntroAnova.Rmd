@@ -296,6 +296,7 @@ unknown variability, noise or residual error in your model. This noise has to be
 similar for all three soil types in your explanatory variable, and crucially, 
 should be normally (bell-shaped) if plotted in a frequency distribution.
 
+### Check frequency histogram of residuals
 We can easily plot the frequency histogram using the `gf_histogram()` function.
 Go ahead and try it now. Remember that before you use the `gf_histogram()` function
 you will need to use the `residuals()` function to save the positive and 
@@ -311,6 +312,7 @@ crop_growth_error <- residuals(crop_growth_lm)
 gf_histogram( ~ crop_growth_error)
 ```
 
+### Check quantile-quantile (QQ) plot
 As this dataset has 30 records (10 per soil type) it is easier to see that the
 frequency histogram approximates to a bell-shaped curve than with the tannins
 and growth example that only had 9 records. However, it is still best to check
@@ -341,3 +343,17 @@ gf_qq(~ crop_growth_error) %>%
 Whilst there are a couple of outlier residuals (see your original boxplot of
 these data), it is clear that most of your residuals roughly follow a straight
 line so you can assume that the linear model is valid.
+
+### Check homogeneity of variance
+We also want to reassure ourselves that the variation (noise or residual error)
+is roughly the same for all three soil types:
+
+```{r}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+gf_boxplot(residuals(crop_growth_lm) ~ crop_growth$soil) %>% 
+  gf_labs(x = "Soil type", y = "Residuals from linear model") %>% 
+  gf_theme(theme_classic())
+```
+
+The residuals are all roughly centred around zero, and the spread of values,
+especially of the boxes (which encompass 50% of the data) are similar sizes.
