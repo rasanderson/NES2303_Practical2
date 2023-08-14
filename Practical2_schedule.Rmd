@@ -170,7 +170,7 @@ Using this template, it is easy to create a linear model for the relationship be
 
 * we add a comment line beforehand to explain what we are doing
 * To the left of your ~ put your response variable, to the right the explanatory
-* use the `<-` symbols to assign the results of your linear model to `growth_lm`
+* use the `<-` symbols to assign the results of your linear model to `growth_lm`. A useful shortcut for the `<-` symbol is to press the Alt and - keys on your keyboard simultaneously.
 
 ```{r, echo = TRUE}
 # Create a linear model to test relationship between growth and tannins
