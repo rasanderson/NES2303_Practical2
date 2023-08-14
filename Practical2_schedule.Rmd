@@ -343,7 +343,7 @@ Firstly, we can see the qq-plot again on the right hand side. This follows the s
 ## Reporting data analyses and results
 Imagine you had done this caterpillar experiment as part of your final-year research project or on another module. How would you write up the "Data Analysis" part of your Methods? How would you write up your Results? Do a rough draft of what you might include and discuss it with a demonstrator.
 
-# **ANOVA**: Linear models with categorical explanatory variable
+# Linear models with categorical explanatory variables: ANOVA
 When your linear model has categorical explanatory variables it is often called "Analysis of Variance" or ANOVA. If you have only one categorical explanatory, it might be called "One-Way ANOVA", with two categorical explanatory variables "Two-Way ANOVA" etc. Today you just have one explanatory.
 
 ## Download and check the data
