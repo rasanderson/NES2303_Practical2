@@ -525,7 +525,7 @@ What we need therefore is a way of easily doing multiple comparisons between eac
 TukeyHSD(soil_lm)
 ```
 
-You have two sets of output here, one a table and the other a plot, but they both show the same information. First the table:
+You have two sets of outputs here, one a table and the other a plot, but they both show the same information. First the table:
 
 * The column headed `diff` shows the difference in the mean crop yield for each comparison of soil types
 * The columns headed `lwr` and `upr` give the lower and upper 95% confidence intervals of this difference. See [Confidence Intervals](https://naturalandenvironmentalscience.shinyapps.io/variation/#section-confidence-intervals) on the Canvas website if you need a refresher
@@ -538,7 +538,10 @@ You have two sets of output here, one a table and the other a plot, but they bot
 plot(TukeyHSD(soil_lm))
 ```
 
-The plot of the Tukey HSD test shows the same information as the earlier table, but is easier to understand. The horizontal x-axis shows the differences in yield on each soil type +/- the 95% confidence intervals. If the line representing the 95% CI crosses zero then there isn't a difference in the mean yield. In both the Tukey table and plot you can see that the only significant pairwise difference is that between sand and loam, where the yield on sand is significantly lower than that on loam. The sand vs loam comparison is the only one where the **95% confidence intervals around the difference between the means does NOT overlap zero**. Look at your boxplot and/or violin plot earlier to help you understand this.
+The plot of the Tukey HSD test shows the same information as the earlier table, but is easier to understand. The horizontal x-axis shows the differences in yield on each soil type +/- the 95% confidence intervals. If the line representing the 95% CI crosses zero then there isn't a difference in the mean yield. In both the Tukey table and plot you can see that the only significant pairwise difference is that between sand and loam, where the yield on sand is significantly lower than that on loam. The sand vs loam comparison is the only one where the **95% confidence intervals around the difference between the means does NOT overlap zero**. Look at your boxplot plot earlier to help you understand this.
+
+### Reporting multiple comparison tests
+It is essential to explain these in your written work, both in the **Methods** and **Results** sections. In the Methods explain that you've used Tukey HSD to undertake pairwise comparison tests between different levels of your factor (here, the different soil types). In your Results, give both the p-values, and magnitude of the differences for each pairwise comparison. You can report this in a table, but remember to cross-reference to your Table Number in your text.
 
 ## Check the assumptions of your linear model
 Just as you did with the earlier example for the caterpillar growth and the continuous explanatory variable, so you should check model assumptions by examining the residuals (errors) from your expectations. See if you can produce a QQ plot (quantile-quantile plot) of your residuals similar to the following:
