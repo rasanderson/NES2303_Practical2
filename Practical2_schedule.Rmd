@@ -550,11 +550,29 @@ Just as you did with the earlier example for the caterpillar growth and the cont
 soil_resid <- residuals(soil_lm)
 
 gf_qq(~soil_resid) %>% 
-  gf_qqline()
+  gf_qqline() %>% 
+  gf_theme(theme_classic())
 
 ```
 
 As you can see, nearly all of the observed residuals fall nicely along the expected pattern of the residuals (centred around zero), suggesting that a key assumption of a linear model, that the residuals are roughly normally distributed, has been met.
+
+We can look to see whether our next important assumption, equal variances for each level, has been met by plotting up the residuals for each level.
+
+```{r}
+gf_point(soil_resid ~ crop_growth$soil) %>% 
+  gf_theme(theme_classic())
+
+```
+
+We can see that the spread of data points is relatively similar across each of the levels in the analysis. This would suggest that we have met our assumption of homogeneity of variance. When we have much larger sample sizes we could look at the residuals using a boxplot. See if you can produce a boxplot of the residuals, overlay the individual residual points and colour those individual points red. You should see that the median value of the boxplots is very close to zero which is good. The graph below uses `gf_jitter()` rather than `gf_point()` to offset the points from each other slightly. You will find this trick useful when you have a lot of data:
+
+```{r}
+gf_boxplot(soil_resid ~ crop_growth$soil) %>%
+  gf_jitter(soil_resid ~ crop_growth$soil, colour = ~crop_growth$soil) %>% 
+  gf_theme(theme_classic())
+```
+
 
 # Working with large biological datasets
 Modern biology and zoology generates big datasets that at first glance can be challenging to understand. Luckily, you can use the skills you've just learnt to summarise, visualise and analyse them. We will now do this with a dataset of over 300 observations!
