@@ -10,9 +10,31 @@ editor_options:
 ```{r setup, include=FALSE}
 library(learnr)
 library(mosaic)
+library(ggpubr)
 caterpillers <- read.csv("www/regression.csv")
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+<style type="text/css">
+span.boxed {
+  border:5px solid gray;
+  border-radius:10px;
+  padding: 5px;
+}
+span.invboxed {
+  border:5px solid gray;
+  padding: 5px;
+  border-radius:10px;
+  color: white;
+}
+table, td, th
+{
+border:0px;
+}
+</style>
+
+
+
 
 ## What are linear models?
 
@@ -95,24 +117,84 @@ the exact mode of causation to identify your variables. The area of habitat
 available is know to affect species diversity, but several competing theories
 have been proposed to explain the mechanism.
 
-### What if I'm unsure what is the "
-
-**Note** Sometimes, typically in 'natural' surveys, it may not be
-obvious which is the response and which is the explanatory. For example,
+### What if I'm unsure which variable is "cause" and which "effect"?
+Sometimes, typically in 'natural' surveys, it may not be
+obvious which is the causal (explanatory) and which is the affected (response)
+variable. For example,
 the numbers of predators and prey may be related at different sites, but
 they also change over time. You can still analyse these data using
 linear models, but be careful not to infer cause and effect. Correlation
-may be more appropriate.
+may be more appropriate. Correlation simply quantifies the strength of the
+relationship between two variables, but does not infer cause and effect. For 
+example:
 
-**Note** You will often see the type of linear model described in this
-tutorial as described as a **regression analysis** in many textbooks.
+```{r echo = FALSE}
+set.seed(123)
+a <- (1:30) + abs(rnorm(10)) * 2
+b1 <- a * 5 + abs(rnorm(30)) * 50
+b2 <- a * 5 + abs(rnorm(30)) * 165
+corr_dat <- data.frame(a = c(a, a), b = c(b1, b2), correl = c(rep("High", 30), rep("Low", 30)))
 
-## Plotting the data
-### The data
+ggplot(corr_dat, aes(x = a, y = b)) +
+  geom_point() +
+  stat_cor(label.x.npc = "left", label.y.npc = "top", r.accuracy = 0.001, p.accuracy = 0.001) +
+  xlab("Variable A") +
+  ylab("Variable B") +
+  facet_wrap(~ correl) +
+  theme_classic()
+```
 
-These are from a laboratory experiment to investigate the relationship
+This plot shows the scatter between two variables, A and B, as measured by the
+correlation coefficient $R$, sometimes shown as $r$. The correlation coefficent
+goes from -1 (perfect negative correlation), to 0 (no correlation) through to 1
+(perfect positive correlation). In the above graph the scatter of points
+**increases** from left to right in both graphs so we have **positive** 
+correlation coefficients displayed. However, the correlation coefficient is much
+higher in the graph on the left, as the data are less noisy.
+
+### Linear models quantify cause and effect
+In most of your studies you are likely to have a good understanding of which
+are your explanatory and response variables. This is particularly going to arise
+when you develop **hypothesis-driven** research questions, both for laboratory
+and field research. This approach as allowed all areas of science to develop
+most rapidly, and if you have good, well-defined research questions you will
+find it easier to develop you data collection / field surveys to a high standard
+and know how to analyse and interpret your findings.
+
+Linear models assume the basic structure of:
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">Response</span> ~ <span class="boxed">Explanatory(s)</span> + <span class="boxed">Noise</span></strong> 
+</h2></center>
+
+&nbsp;
+
+There are two components here:
+
+* **Signal** = impact of your explanatory variable(s) on your response
+* **Noise**  = unknown variation in your data
+
+All linear models measure the signal to noise ratio. The **lower** you can make
+the noise the more likely you will be able to detect the effects of your
+explanatory variables. You can reduce the noise by changes in your experimental/
+field survey design, and also what assumptions you make about the characteristics of the
+unknown noise in the data. This will improve the inferences you can make from
+your laboratory experiments and field surveys.
+
+
+## Data exploration
+### The experimental data
+
+Here are some data from a laboratory experiment to investigate the relationship
 between caterpiller growth rates and the amount of tannins in their
-diet. Before you continue, answer the following question:
+diet. Tannins are produced by some plants to reduce attack by insects. They are
+what gives black tea its slightly bitter taste. The caterpillers were fed diets
+that contained different amounts of tannins (mg), and the caterpiller growth 
+rate (mg/day) measured.
+
+Before you continue, answer the following question:
 
 ```{r which_is_response, echo=FALSE}
 question("Which of the following statements is true?",
@@ -138,11 +220,8 @@ question("What variables go on the x (horizontal) and y (vertical) axes?",
 )
 ```
 
-*Interactive R code exercise*
-
 Write the R code required calculate the means (averages) of the values
-in the `caterpillers` dataframe. What are the names of the columns? How
-many rows of data are there? Click the `hint` button if you get stuck.
+in the `caterpillers` dataframe. Click the `hint` button if you get stuck.
 
 ```{r basic_stats, exercise=TRUE, exercise.completion=FALSE}
   
@@ -150,10 +229,7 @@ many rows of data are there? Click the `hint` button if you get stuck.
 
 ::: {#basic_stats-hint}
 **Hint** Use the `ls()` function to see what is in your workspace, use
-the `summary()` function to get some basic statistics, use the `nrow()`
-or `dim()` function to get the number of rows, or rows and columns. To
-display the whole object simply type its name. To display the first few
-lines, use `head()`.
+the `summary()` function to get some basic statistics, that includes the averages.
 :::
 
 Now produce a scatterplot of the caterpiller growth rate (y-axis)
@@ -167,8 +243,8 @@ tend to follow a "formula" syntax.
 ```
 
 ```{r scatter_plot-solution}
-plot(growth ~ tannin, data=caterpillers)
-gf_point(growth ~ tannin, data=caterpillers)
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_theme(theme_classic())
 ```
 
 Imagine fitting a straight line to this scatter of points in your plot,
@@ -185,8 +261,27 @@ question("Which statements below are true?",
 ```
 
 ## Creating a linear model
+A linear model is used to test your null hypothesis $H0$  (it does not formally
+test your alternative hypothesis $HA$):
 
-The `lm()` function is used to analyse your data, with the standard
+* $H0$ = null hypothesis = probability that your explanatory variable has **no
+significant effect** on your response variable
+* $HA$ = alternative hypothesis = probability that your explanatory variable
+affects your response variable.
+
+This is a bit confusing, because you're probably more interested in $HA$ than in
+$H0$ but it does not matter. Your linear model will produce a **p-value** which is
+the probability of $H0$ being true. If your p-value is very low (less than 0.05)
+then we "reject" the null hypothesis. We thus "implicitly" accept the alternate
+hypothesis, even though we don't formally test it.
+
+For our caterpiller growth vs tannins dataset, our null hypothesis $H0$ would be
+"Tannins have no affect on caterpiller growth rate". Our linear model will allow
+us to accept this hypothesis if the probability of the hypothesis being true is
+greater than 5% (p > 0.05), or reject it if the probability of it being true is
+less than 5% (p < 0.05). The 0.05 cutoff is a scientific convention.
+
+The `lm()` function is used to create a linear model, with the standard
 syntax of
 
 `lm(response_variable ~ explanatory_variable, data=dataframe_name)`
@@ -196,6 +291,7 @@ object, so that you can summarise, display or use the results of your
 linear model:
 
 `lm_results <- lm(response_variable ~ explanatory_variable, data=dataframe_name)`
+`summary(lm_results)`
 
 In the R coding space below, create a linear model for your
 `caterpiller` data, making sure that you specify the response and
@@ -214,8 +310,8 @@ summary(caterpiller_lm)
 
 You should see an output summary, with quite a lot of information in it,
 but there are only a small number of components that are critical, so
-don't be daunted! The next section shows you how to understand the
-`summary` tables.
+don't be daunted! The next section shows you how to understand the table
+output by the `summary()` command.
 
 ## How to interpret lm summary
 
@@ -267,14 +363,14 @@ Provides the standard errors for your estimates.
 ### fourth column `t value` gives the estimated statistic from the **t distribution**
 
 which is a statistical distribution (developed to improve the brewing of
-Guiness stout!).
+Guinness stout!).
 
 ### Fifth and final column, headed `Pr(>|t|)`
 
 This indicates "how likely you are to have obtained these values from a
-t-distribution according to the null hypothesis". That's very confusing!
+t-distribution according to the null hypothesis $H0$". That's very confusing!
 A simpler interpretation is "what is the probability of obtaining the
-estimated intercept and gradient if there was no relationship between
+estimated intercept and gradient if there was **no relationship** between
 caterpiller growth rate and tannin". Basically, the **lower** these
 **p-values** the **more important** the gradient and intercept.
 
@@ -313,26 +409,39 @@ The final three rows give:
 
 -   The residual standard error (don't worry about this for now)
 -   R-squared values (see below)
--   F-statistic and its p-value (see below)
+-   F-statistic, degrees of freedom, and p-value (see below)
 
-The R-squared value goes from zero to 1.0, and can be interpreted as a
+**The R-squared value** goes from zero to 1.0, and can be interpreted as a
 percentage. It indicates what proportion (or percentage) of your y
 (response) value can be explained by your x-value (explanatory). Two
 R-squared values are given, and always use the one headed
 `Adjusted R-squared`. You have a value of 0.7893 which means that almost
 79% of the variation in caterpiller growth can be explained by variation
-in tannin. **Note** The square root of the R-squared is the same as the
-correlation coefficient.
+in tannin.
 
-All linear models can produce an F-statistic. Here, this is an overall
+**F-statistics** can be produced by all linear models. Here, this is an overall
 one, for the (single) explanatory variable of tannin. As you only have
 one explanatory variable, your overall F-statistic has the same p-value
 as shown against tannin earlier on, of 0.000846. The larger the
-F-statistic, the more signficiant is the overall linear model.
+F-statistic, the more significant is the overall linear model.
 
-## Plotting the fitted line
+**Degrees of freedom (DF)** Two numbers are displayed for DF, 1 and 7. The first value,
+1, relates to the number of parameters being estimated, not counting the Intercept,
+which here is the slope of the line. The second is the number of observations (9)
+minus the number of parameters estimated (two, for the slope and intercept).
 
-You now want to display your fitted line on your scatter of points.
+**p-value** This is the overall probability of your null hypothesis $H0$ of no
+effect of tannins on growth being true. You can see that it is very low, so we
+can reject the null hypothesis. You only have one explanatory variable, `tannin`
+in this linear model, so this p-value is identical to the one shown against the
+`tannin` row higher up in the output. Sometimes you will have multiple
+explanatory variables, and so the overall model p-value will differ.
+
+## Model predictions
+
+Our linear model indicated that the relationship between tannins and caterpiller growth rate is
+highly significant therefore it would be usefule to display the predicted line
+from the linear model onto your scatter of points.
 Remember that your fitted line will have the same intercept and gradient
 as shown in your summary, with a negative gradient (slope) reflecting
 the decline from left to right. This is easiest to plot using the
@@ -341,7 +450,7 @@ the decline from left to right. This is easiest to plot using the
 known as a "pipe" operated in R, using the notation `%>%` which can be
 interpreted as the English word "then". So, in English you
 
--   Create a scatterplot, with growth as response, tanin as explanatory
+-   Create a scatterplot, with growth as response, tannin as explanatory
     **then**
 -   add the fitted line
 
@@ -349,7 +458,8 @@ which in R code is:
 
 ```{r show_fitted_plot, echo=TRUE, eval=FALSE}
 gf_point(growth ~ tannin, data=caterpillers) %>% 
-  gf_lm()
+  gf_lm() %>% 
+  gf_theme(theme_classic())
 ```
 
 Notice the symbol `%>%` at the end of the first line, which you should
@@ -357,13 +467,32 @@ read as "then". Try out these commands below. What happens if you run:
 
 `gf_lm(growth ~ tannin, data=caterpillers)`
 
+What is the effect of adding the argument `interval = "confidence"` to the `gf_lm()` function?
+
 ```{r plot_data, exercise=TRUE, exercise.completion=FALSE}
   
 ```
+```{r plot_data-solution}
+# Scatterplot with fitted line
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_lm() %>% 
+  gf_theme(theme_classic())
+
+# gf_lm simply produces the line
+gf_lm(growth ~ tannin, data=caterpillers) %>% 
+  gf_theme(theme_classic())
+
+# You can add standard error bands to the fitted line
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_lm(interval = "confidence") %>% 
+  gf_theme(theme_classic())
+
+```
+
 
 ### Obtaining the fitted values for input x-values
 
-The fitted or "predicted" values are those along your straight line. For
+The fitted or "predicted" values are those along your straight line, which you have just plotted. For
 the 9 values of tannin, these are stored in the model output, under the
 `fitted.values` option which you can access by typing
 `caterpiller_lm$fitted.values` after you have created your linear model.
@@ -374,6 +503,12 @@ to 9. Compare it with the graph you created earlier.
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
 
 ```
+```{r lm_fitted-solution}
+caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+model_fitted_values <- caterpiller_lm$fitted.values
+model_fitted_values
+```
+
 
 ### Fitted for new input x-values
 
@@ -388,6 +523,10 @@ tannin, that was not in your original dataset. For example, tannin at
 2.  Create a function, using `makeFun`, derived from your model, to
     predict the results. This is more flexible, especially with complex
     models.
+
+In the next code-box we create our own command function called `predictor` into
+which we can enter a single tannin value (`4.36`) or the tannin values 1 to 10
+via the shortcut `1:10`:
 
 ```{r lm_makeFun, echo=TRUE}
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
@@ -408,26 +547,60 @@ it `predictor`).
 ```{r lm_makeFun2, exercise=TRUE}
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
 ```
+```{r lm_makeFun2-solution}
+caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+
+# Create your prediction function. Let's call it growth_predictor
+growth_predictor <- makeFun(caterpiller_lm)
+
+# Now predict the growth rate at e.g. tannin 7.12 mg
+growth_predictor(7.12)
+```
 
 ## Checking model assumptions
 
 ### Model assumptions
+All statistical tests have assumptions associated with them and we need to check whether our assumptions have been met so that we know we have undertaken the correct analysis and our subsequent inference from our statistical tests are valid. There are three key assumptions that you should always consider:
 
-One of the key assumptions about all linear models is that the
-**residuals** are from a **normal** distribution. So what do we mean by
-*residuals*? Look at the graph of your points and the fitted line from
-the model:
+* Normally distributed errors
+* Homogeneity of variance
+* Independence of replicates
 
-```{r fitted_line_and_data, echo=FALSE}
+Most of these can be informally assessed by eye, or consideration of how you collected your data.
+
+#### **Normally distributed errors**
+We have already mentioned that your linear model has this structure:
+
+&nbsp;
+
+<center>
+<h2><strong><span class="boxed">Response</span> ~ <span class="boxed">Explanatory(s)</span> + <span class="boxed">Noise</span></strong> 
+</h2></center>
+
+&nbsp;
+ 
+but we have focussed entirely on the response and explanatory variables, we haven't talked about the errors. These are also called "residuals". They are the unknown "noise" from your model predictions as represented by the blue straight line, and the black data points of your observations:
+
+```{r fitted_line_and_data, echo=FALSE, warning=FALSE}
 caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
 gf_point(growth ~ tannin, data=caterpillers) %>% 
-  gf_lm()
+  gf_lm() %>% 
+  gf_theme(theme_classic())
 ```
 
-Not all your observations fall exactly on the line, as sometimes they
-are slightly above, and sometimes below. Even if you do an amazingly
-good experiment, it is very unlikely that they will all fall exactly on
-the line. You will always have residuals.
+These errors (residuals) might be clearer to see if highlighted in red; they are the difference between your fitted and observed values. Note that some of the errors are positive (above the blue fitted line) and some are negative (below the line), and the sum of these errors will be zero:
+
+```{r fitted_line_and_data2, echo=FALSE}
+caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+fits <- caterpiller_lm$fitted.values
+
+gf_point(growth ~ tannin, data=caterpillers) %>% 
+  gf_lm() %>% 
+  gf_segment(growth + fits ~ tannin + tannin, colour = "red") %>% 
+  gf_theme(theme_classic())
+```
+
+Not all your observations fall exactly on the line, as sometimes they are slightly above, and sometimes below. You can see that there is “noise” around the fitted line. The residual for each observation or data point is the difference between the predicted values of y (the line) and the observed value of y. Even if you do an amazingly good experiment, it is very unlikely that they will all fall exactly on the line. You will always have residuals. In some cases, extra explanatory variables can be added to the regression, which will explain more of the variation.
 
 ```{r residuals_basics, echo=FALSE}
 question("Which of the following statements is true?",
@@ -544,31 +717,77 @@ As you can see, your QQ plot points match very closely to the
 theoretical ideal of a straight line suggesting that your linear model
 is robust.
 
-## How to report your results
+## How to write up your analyses
 
-It is important to report the results of your linear model correctly.
-Here are some good and poor ways of doing so for these data:
+Your reports for most of your work, especially in Stage 3, are likely to have the
+following format:
 
-### Good
+* Abstract
+* Introduction
+* Methods
+* Results
+* Discussion
+* References
 
--   There was a significant negative relationship between growth and
-    tannin (t=-5.565, P \< 0.001) with 78.9% of the variability in
-    growth explained by tannin.
--   The overall linear model for tannins and growth was signficant
-    (F<sub>1,7</sub>=30.97, P \< 0.001)
+Look in the **NES2303 Course Handbook** on Canvas for some detailed advice on
+how to write reports especially if you find scientific writing hard. Here we
+focus on the Methods and Results
 
-### Poor
+### Methods
+This will have two or more sections, the first explaining the laboratry 
+procedures or field survey methods used. For a field survey, you might want to
+begin your Methods with a separate section to provide a site description.
+Whether you do a laboratoy or field-based study, the last section **must**
+contain an explanation of the data analyses used and software. For example:
 
--   The regression proved that tannins affect growth **Note** Never use
+"All laboratory data were initially recorded in Excel spreadsheets for each
+experiment. These were saved as .CSV files, and analysed in R 4.3 using linear
+models, to determine whether caterpiller diet had any impact on caterpiller
+growth rate. Linear model assumptions of normally-distributed errors were
+checked through the creation of quantile-quantile residual plots."
+
+### Results
+Results must **always** start with a paragraph of text. Do not start with a
+table, graph or similar. The text should cross-reference your Tables / Figures.
+Present your result in a factual, impartial way. For example: "There was a
+significant negative relationship between growth and tannin (Figure 1; t=-5.565,
+P \< 0.001) with 78.9% of the variability in growth explained by tannin (Table 1)."
+
+Ensure that Figure 1 (your scatterplot with fitted line) has a caption and is
+nicely formatted. You will **not** be able to use the output from your
+`summary(caterpiller_lm)` function as a direct copy-and-paste to create Table 1.
+**Always** retype the R output so it is properly formatted, with a sensible 
+number of decimal places. If reporting F-ratios, remember to include the 
+degrees of freedom as subscripts, e.g. "The overall linear model for tannins and
+growth was signficant (F<sub>1,7</sub>=30.97, P \< 0.001)"
+
+### Common bad practice when reporting Methods and Results
+Please avoid these common mistakes as you will lose marks!
+
+* Not mentioning data analyses in your Methods
+* Including Tables and Figures in the report, but not cross-referencing them
+* A Results section that consists entirely of Tables/Figures but no text
+* Too many decimal places from R output copied unedited
+* P-values presented as 3.4124e-11 rather than p<0.001
+* "The regression proved that tannins affect growth" **Note** Never use
     'proved' in reports etc.
--   The overall R<sup>2</sup> was 81.6%. **Note** Use Adjusted R-squared
-    of 78.9%
--   The results were significant with P=5.94e-06. **Note** For low
-    P-values report P \< 0.001
--   The results were significant with P\<0.001. **Note** you should
-    report the F- or t-statistic
--   Overall linear model was significant (F=30.97, P\<0.001). \*\*This
-    is a subtle error. Ideally you should give the *degrees of freedom
-    (see other tutorial)* as well as the F-statistic. See the second
-    bullet point above where you can see F<sub>1,7</sub> indicating 1
-    and 7 degrees of freedom.
+
+## Summary and further reading
+### Key points learnt
+Hopefully you now have a good understanding of
+
+* Response and explanatory variables, and how to identify them
+* Basic concepts of a linear model
+* How to create a linear model, interpret its outputs, and check the assumptions
+that underly the model
+* Good practice for reporting your data science
+
+### Reading
+There is a lot of excellent material available at the Library and online.
+Particularly recommended are:
+
+* Experimental Design and Data Analysis for Biologists by Quinn and Keough Chapter 5
+* Getting Started with R Chapter 5
+* Zuur et al A protocol for data exploration to avoid common statistical problems (https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210X.2009.00001.x)  This is
+published in the main journal of the British Ecological Society - it is quite challenging in places
+but will give you a really good understanding.

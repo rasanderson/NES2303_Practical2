@@ -33,6 +33,7 @@ different categories, representing different treatments. Examples might include:
 | Crop growth | Fertiliser | None (control), Nitrogen, Phosphorous, Potassium |
 | Biodiversity | Habitat | Woodland, Grassland, Scrub, Suburban |
 | qPCR amplification | Treatment | no DNA (-ve control), DNA template (+ve control),  DNA sample A, DNA sample B |
+| Marine macrophyte cover | Tidal position | Low-, medium- and high-shore |
 
 Designed experiments, for example field trials or laboratory experiments, will
 often have a *Control* level, i.e. no treatment, whereas ecological surveys may
@@ -44,8 +45,9 @@ contaminated with DNA etc. and whilst your positive control uses a standard
 DNA sample where you know what you should expect to check the qPCR amplification
 is working properly.
 
-**Note:** 
-* When the explanatory variable is cateogrical it is often called a **factor** 
+### Note 
+
+* When the explanatory variable is categorical it is often called a **factor** 
 and so you may see the term **factorial analysis** used in some books
 * The different categories in your explanatory variable are usually referred
 to as **levels**
@@ -76,14 +78,17 @@ question("Which one statement of the following is true?", type="learnr_checkbox"
 ```
 
 
-## Example dataset
+## Understanding your data
 
-The data come from an experiment into crop yields on three different soil types,
-sand, clay and loam, and as such this is an example where we have a categorical
-explanatory variable, with three levels (one for each of the three soil types),
-but no formal control. In the R session below, find out the name of the R object,
-look at the first 10 rows, check how many replicates there are for each of the
-soil types, and calculate the standard deviations for each soil type:
+TWe are going to look at a data set that includes a categorical explanatory variable. The data come from an experiment into crop yields on three different soil types, sand, clay and loam. Soil type is the categorical explanatory variable, with three levels (one for each of the three soil types), but in this case we have no formal control. The aim is to look at the differences in crop yield among the three levels. We could formulate a hypothesis to test along the lines of:
+
+*"There is a significant difference in crop yields among the crop types."*
+
+Our linear model does a formal test to accept our null hypothesis. This gives us a null hypothesis of:
+
+*"There is no significant differences in crop yields among the crop types."*
+
+First of all lets start by finding out more about our data. We will be using a dataframe called "crop_growth" which includes one explanatory and one response variable. In the R session below, find out the name of the R object ls(), look at the first 10 rows head(), check how many replicates there are for each of the soil types nrow(), and calculate the standard deviations for each soil type. if you get stuck, look at the hint for more details.
 
 ```{r quick_check, exercise = TRUE, exercise.completion = FALSE}
 
@@ -97,7 +102,7 @@ soil types, and calculate the standard deviations for each soil type:
 all the data. To break it down nicely per soil type use `favstats(response ~ 
 explanatory, data=datasetname)`
 * The function `sd(response ~ explanatory, data=datasetname)` and
-`tally(~explanatory, data=datasetname)` will display only standard errors and
+`tally(~explanatory, data=datasetname)` will display only standard deviations and
 numbers of replicates respectively, for each soil type.
 </div>
 
@@ -137,9 +142,7 @@ quiz(caption = "Stats summaries",
 
 ## Plotting your data
 
-Before analysing your data it is always useful to visualise them. One of the
-most useful ways of summarising your data when you have a categorical explanatory
-variable is via a *boxplot*. You can easily create one of these using the 
+It is essential to visualise your data **before** you analyse thems o that you can see any trends and begin to identify patterns. One of the most useful ways of summarising your data when you have a categorical explanatory variable is via a boxplot. This is because a boxplot provides valuable information about the distribution, spread and central tendency of your data. You can easily create one of these using the 
 `gf_boxplot()` function, which has the syntax:
 
 `gf_boxplot(response_variable ~ explanatory_variable, data=datasetname)`
@@ -149,14 +152,12 @@ Try it now on your crop yield data
 ```{r boxplot, exercise = TRUE, exercise.completion = FALSE}
 
 ```
-<div id="boxplot-hint">
-**Hints:**
-* Make sure that you put the response variable on the left and the explanatory
-on the right of your equation
-* Use the `ls()` function if you've forgotten the name of your R dataset you
-want to plot. Use the `head()` function to look at the column names and first
-few rows of data.
-</div>
+```{r boxplot-solution}
+# Visualisation of data with boxplot
+gf_boxplot(yield ~ soil, data = crop_growth) %>% 
+  gf_theme(theme_classic())
+```
+
 
 ### How to interpret a boxplot
 A boxplot is made up of several parts. The horizontal lines represent the
@@ -175,25 +176,7 @@ your data, which are indicated by one or more points above or below the whiskers
 You can see that in your data there are outliers for clay and sand.
 
 ### What to look for in a boxplot
-The main thing to check is that the spread of the data is **_roughly_** the same
-for each level of your explanatory data, i.e. that the boxes and whiskers are 
-fairly similar. You can see that in your data, they are all approximately the
-same size, even though the yield overall appears lower for sand. One assumption
-of a linear model is that the spread of values is roughly the same at each level.
-
-### Variations on a boxplot
-Two variations on boxplots have become popular in recent years:
-
-* Notch plots. You can create these with
-
-`gf_boxplot(response_variable ~ explanatory_variable, data = datsetname, notch = TRUE)`
-
-* Violin plots, created with
-
-`gf_violin(response_variable ~ explanatory_variable, data = datasetname)`
-
-Experiment with these alternatives in the R console above, and you will be
-familiar with them should you see them in any books, papers or lectures.
+The main thing to check is that the spread of the data is roughly the same for each level of your explanatory data, i.e. that the boxes and whiskers are fairly similar and whether the horizontal line is close to the center of the box. Checking the boxplot allows you to assess an important assumption of a linear model which is that the variance is roughly the same at each level. Looking at the spread of data in the boxplots gives us an approximation of whether we have equal variances across the levels. We refer to the equal spread of data across each of the levels as **homogeneity of variance**. If this spread is not equal when comparing among the levels within the categorical variable, we refer to it as **heterogeneity of variance**. There are formal statistical tests which can be used to assess homogeneity of variance but these can be biased by low sample size. In this example, you can see that in your data, they are all approximately the same size, even though the yield overall appears lower for sand. Therefore, we can say that there is homogeneity of variance..
 
 ## Analyse and interpret linear model
 Analysis of your data has the same syntax when the explanatory variable is
@@ -238,7 +221,7 @@ crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
 summary(crop_growth_lm)
 ```
 
-This table at looks very similar to the one from the `growth ~ tannin` example
+This table looks very similar to the one from the `growth ~ tannin` example
 for the caterpillers dataset, where we had a continuous explanatory variable.
 What is a bit confusing are the labels for the rows:
 
@@ -283,10 +266,25 @@ the first two comparisons, loam-clay and sand-clay, the 95% confidence intervals
 straddle zero, in other words the differnce in yield might not be important.
 However, for the sand-loam comparison, on the sand the yield is much lower than
 the loam (-4.4: compare with your boxplot). The 95% confidence intervals do not
-include zero, and so this difference is signficant with p=0.020
-
-This is obvious in the plot where you can see that it is only for the sand vs 
+include zero, and so this difference is signficant with p=0.020. This is obvious
+in the plot where you can see that it is only for the sand vs 
 loam difference that the error bars do not include zero.
+
+### Writing up Tukey HSD results
+When you report what you've done, you need to explain your multiple comparison
+tests in both your Methods and Results, for example:
+
+**Methods**
+"After testing for the effects of soil type on crop yield, potential differences
+between individual soil types on yield with assessed via pairwise Tukey multiple
+comparison tests (Tukey Honest Significant Difference, HSD, tests)"
+
+**Results**
+"Crop yield was significantly higher (4.40 kg/ha) on loam than sand soils 
+(Tukey HSD p = 0.0204). There was no difference in mean crop yield on loam vs
+clay (p = 0.179) or sand vs clay (p = 0.555)." You could also present the results
+of your Tukey HSD test in a figure or table, but remember to cross-reference 
+them from the text.
 
 ## Check model assumptions
 After looking at the results of your linear model, it is worth checking that
@@ -298,6 +296,7 @@ unknown variability, noise or residual error in your model. This noise has to be
 similar for all three soil types in your explanatory variable, and crucially, 
 should be normally (bell-shaped) if plotted in a frequency distribution.
 
+### Check frequency histogram of residuals
 We can easily plot the frequency histogram using the `gf_histogram()` function.
 Go ahead and try it now. Remember that before you use the `gf_histogram()` function
 you will need to use the `residuals()` function to save the positive and 
@@ -313,6 +312,7 @@ crop_growth_error <- residuals(crop_growth_lm)
 gf_histogram( ~ crop_growth_error)
 ```
 
+### Check quantile-quantile (QQ) plot
 As this dataset has 30 records (10 per soil type) it is easier to see that the
 frequency histogram approximates to a bell-shaped curve than with the tannins
 and growth example that only had 9 records. However, it is still best to check
@@ -343,3 +343,35 @@ gf_qq(~ crop_growth_error) %>%
 Whilst there are a couple of outlier residuals (see your original boxplot of
 these data), it is clear that most of your residuals roughly follow a straight
 line so you can assume that the linear model is valid.
+
+### Check homogeneity of variance
+We also want to reassure ourselves that the variation (noise or residual error)
+is roughly the same for all three soil types:
+
+```{r}
+crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
+gf_boxplot(residuals(crop_growth_lm) ~ crop_growth$soil) %>% 
+  gf_labs(x = "Soil type", y = "Residuals from linear model") %>% 
+  gf_theme(theme_classic())
+```
+
+The residuals are all roughly centred around zero, and the spread of values,
+especially of the boxes (which encompass 50% of the data) are similar sizes.
+
+## Summary
+You have now seen how to use linear models with categorical explanatory variables.
+Key take-home messages are:
+
+* Always visualise your data with boxplots, to check for homogeneity of variance
+* Structure of your linear model is unchanged, it is simply that your 
+explanatory variable now has categorical levels in it
+* Use multiple comparison tests such as Tukey HSD to check for "between-level"
+differences
+* Remember to check model assumptions
+
+### Further reading
+
+* Experimental Design and Data Analysis for Biologists. Chapter 8 covers one-way ANOVA
+(print copy only)
+* Getting started with R: and introduction for Biologists. [Chapter 5](https://libsearch.ncl.ac.uk/permalink/f/1kstl9b/NCL_ALMA21119160920002411) 
+contains advice on ANOVA (online version available)

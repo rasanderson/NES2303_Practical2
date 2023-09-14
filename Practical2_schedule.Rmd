@@ -1,5 +1,5 @@
 ---
-title: 'Practical 2: Linear models and ANOVA'
+title: 'Practical 2: Getting started with Linear models'
 author: "BIO2020"
 output:
   html_document:
@@ -38,7 +38,6 @@ library(dplyr)
 library(palmerpenguins)
 library(ggformula)
 library(mosaic)
-library(bio2020)
 ```
 
 # Introduction
@@ -90,7 +89,7 @@ All linear models have a continuous response variable. By "continuous" the respo
 * the average bird population at a site across all surveys has a categorical explanatory habitat type, **with four 'levels'** for the 4 different habitats
 * Pollinator diversity and wildflower diversity are both continuous. I think it is reasonable to assume that the biodiversity of wildflowers will have a big effect on the pollinators out there, so I've listed wildflower diversity as the explanatory variable. However, some scientists have shown that if the pollinator biodiversity declines sharply, this has a negative effect on the biodiversity of some wildflowers. So in this example the response and explanatory terms are a little more ambiguous.
 
-# **Regression**: Linear models with continuous explanatory variables
+# Linear models with continuous explanatory variables: Regression
 Linear models with continuous explanatory variables are often called "regression analyses". If you have two or more continuous explanatory variables you may see them called "multiple regression".
 
 ## Download data and calculate simple statistics
@@ -110,10 +109,10 @@ We need to load the data into R and store it in an object so we can access it ea
 ```{r}
 # Examples of linear models for continuous and categorical data
 
-# Activate the bio2020 R package
-library(bio2020)
+# Activate the mosaic R package
+library(mosaic)
 
-# Read in the caterpillars.csv file (omit Data/ if not using a CSV subfolder)
+# Read in the caterpillars.csv file (omit Data/ if not using a subfolder to store data)
 caterpillar_dat <- read.csv("Data/caterpillars.csv")
 ```
 
@@ -131,10 +130,17 @@ dim(caterpillar_dat)
 We can see that this data set contains 2 continuous variables; growth (mg/day) and tannin (mg). What is the mean, minimum, maximum value of these two variables (look back to Practical 1 if you have forgotten how to obtain these data).
 
 ## Simple visualisation of caterpillar data
-In general it is a good idea to plot your data, to gain an understanding of its characteristics, before running a linear model. As you have two fairly simple variables, a scatter plot with our explanatory variable of tannin on the x axis and growth on the y axis will do. Obviously, for a report you would need to improve the axis labels etc.
+It is essential to plot your data, to gain an understanding of its characteristics, before running a linear model. As you have two fairly simple variables, a scatter plot with our explanatory variable of tannin on the x axis and growth on the y axis is required. Before proceeding, do the following:
+
+* Use the `gf_point()` function to create your scatterplot with `tannin` on the x-axis (explanatory) and `growth` on the y-axis (response)
+* Add a second row to your R code with command `gf_labs()` to label the x- and y-axes as shown below. Us `%>%` at the end of the preceding line so that the gf_labs() command is actioned
+* Add a third row to your R code to change the theme from the nasty grey background etc. using `gf_theme()`, remembering to add `%>%` to the end of the second row.
+* Your graph should appear as shown below. Check with a demonstrator to ensure you have done it correctly. Look at your script from _Practical 1 Data visualisation_ for futher reminders:
 
 ```{r echo = FALSE}
-gf_point(growth~tannin, data = caterpillar_dat)
+gf_point(growth~tannin, data = caterpillar_dat) %>% 
+  gf_labs(x = "Dietary tannin (mg)", y = "Caterpillar growth rate (mg/day)") %>% 
+  gf_theme(theme_classic())
 ```
 
 From this plot answer the following questions and check with a demonstrator before continuing:
@@ -164,7 +170,7 @@ Using this template, it is easy to create a linear model for the relationship be
 
 * we add a comment line beforehand to explain what we are doing
 * To the left of your ~ put your response variable, to the right the explanatory
-* use the `<-` symbols to assign the results of your linear model to `growth_lm`
+* use the `<-` symbols to assign the results of your linear model to `growth_lm`. A useful shortcut for the `<-` symbol is to press the Alt and - keys on your keyboard simultaneously.
 
 ```{r, echo = TRUE}
 # Create a linear model to test relationship between growth and tannins
@@ -239,7 +245,16 @@ gf_point(growth~tannin, data = caterpillar_dat) %>%
         gf_theme(theme_classic())
 ```
 
-If you have any problems producing the above plot then speak to a demonstrator. Also try the "minimal" theme. Once you have your R commands working, try changing `theme_classic()` to `theme_minimal()` to see the difference.
+We need to illustrate some form of uncertainty around the regression line. The most appropriate method is to add the 95% confidence intervals around the fitted line. We can do this by editing the `gf_lm()` function by adding `interval = "confidence", level = 0.95` to the brackets. When you replot your figure, you will see a grey band appear around the line. This represents the range in which the true regression line can be plotted. In other words, any intercept and slope is potentially possible within this grey area.
+
+```{r echo=FALSE}
+gf_point(growth~tannin, data = caterpillar_dat) %>% 
+        gf_lm(colour = "green", interval = "confidence", level = 0.95) %>% 
+        gf_labs(x = "Tannin concentration (mg)", y = "Caterpillar growth (mg/day) +/- 95% CI") %>% 
+        gf_theme(theme_classic())
+```
+
+If you have any problems producing the above plot then speak to a demonstrator. Do not continue unless you have completed this step successfully, and confirmed with a demonstrator that you understand the output.
 
 
 ## Calculate predicted values of growth for new values of tannin 
@@ -309,10 +324,26 @@ gf_qq(~growth_resids) %>%
 
 Now you can see that even though we only have 9 data points, they fall very closely onto the dotted straight line. This indicates that the model assumptions have been met. **Note** The QQ plot is to check _model assumptions_. It is not used to test the statistical significance of individual explanatory variables, for which you need to look at the `summary()` output of the linear model.
 
+The second assumption that we need to check is that we have equal spread of residuals around the regression line. That is the residuals do not get bigger or smaller as the fitted values change. We can do this by "plotting" the lm object. This is give us a series of plots but we are only interested in in the first two.
+
+```{r echo=TRUE, eval=FALSE}
+par(mfrow=c(1,2)) # sets two plots side-by-side in the Plots tab in RStudio
+plot(growth_lm, which =1:2) # plots the first two diagnostic plots from the lm object
+par(mfrow=c(1,1)) # sets the plotting window back to just one plot
+```
+
+```{r echo=FALSE}
+par(mfrow=c(1,2)) # sets two plots side-by-side in the Plots tab in RStudio
+plot(growth_lm, which =1:2) # plots the first two diagnostic plots from the lm object
+par(mfrow=c(1,1)) # sets the plotting window back to just one plot
+```
+
+Firstly, we can see the qq-plot again on the right hand side. This follows the same pattern as the one we plotted a minute a go so we can just ignore it. The plot on the left hand side shows our residuals vs fitted values and we can see that these are roughly symmetrical around 0. This would indicate that we have no systematic change in the residuals along the fitted values.
+
 ## Reporting data analyses and results
 Imagine you had done this caterpillar experiment as part of your final-year research project or on another module. How would you write up the "Data Analysis" part of your Methods? How would you write up your Results? Do a rough draft of what you might include and discuss it with a demonstrator.
 
-# **ANOVA**: Linear models with categorical explanatory variable
+# Linear models with categorical explanatory variables: ANOVA
 When your linear model has categorical explanatory variables it is often called "Analysis of Variance" or ANOVA. If you have only one categorical explanatory, it might be called "One-Way ANOVA", with two categorical explanatory variables "Two-Way ANOVA" etc. Today you just have one explanatory.
 
 ## Download and check the data
@@ -336,7 +367,7 @@ crop_growth <- read.csv("Data/crop_growth.csv")
 ```
 
 
-The `summary()` function give minimum, maximum, mean, median values for the column of `yield` but the information on `soil` is simply listed as "character". This is a text variable. It is often easier when working with linear models to formally define this type of variable as a "factor" and it will then automatically show the individual "levels". This is not essential, but makes the output from `summary()` easier to interpret. As we only want to define `as.factor()` for the `soil` column, we make use of the `$` symbol to access just that column in the `crop_growth` table of data.
+The `summary()` function gives minimum, maximum, mean, median values for the column of `yield` but the information on `soil` is simply listed as "character". This is a text variable. It is often easier when working with linear models to formally define this type of variable as a "factor" and it will then automatically show the individual "levels". This is not essential, but makes the output from `summary()` easier to interpret. As we only want to define `as.factor()` for the `soil` column, we make use of the `$` symbol to access just that column in the `crop_growth` table of data.
 
 ```{r}
 # Convert the soil column from a character to a factor
@@ -456,7 +487,7 @@ b) With a p-value of 0.02495 and $F$ of 4.245 there was a significant difference
 c) There was a highly significant effect of soil type on yield ($F$=4.245, p=0.025)
 d) There was a significant difference in crop yield in response to soil type ($F_{2,27}$=4.245, p=0.025)
 
-Which of the four is the best description of the results and why? Discuss your thoughts **with demonstrators and other students on the Microsoft Teams** channel for this practical (Section 2).
+Which of the four is the best description of the results and why? Discuss your thoughts **with demonstrators and your fellow students**.
 
 You might be wondering why we used the `anova()` function rather than `summary()`. The latter can be a little confusing at first sight:
 
@@ -494,7 +525,7 @@ What we need therefore is a way of easily doing multiple comparisons between eac
 TukeyHSD(soil_lm)
 ```
 
-You have two sets of output here, one a table and the other a plot, but they both show the same information. First the table:
+You have two sets of outputs here, one a table and the other a plot, but they both show the same information. First the table:
 
 * The column headed `diff` shows the difference in the mean crop yield for each comparison of soil types
 * The columns headed `lwr` and `upr` give the lower and upper 95% confidence intervals of this difference. See [Confidence Intervals](https://naturalandenvironmentalscience.shinyapps.io/variation/#section-confidence-intervals) on the Canvas website if you need a refresher
@@ -507,7 +538,10 @@ You have two sets of output here, one a table and the other a plot, but they bot
 plot(TukeyHSD(soil_lm))
 ```
 
-The plot of the Tukey HSD test shows the same information as the earlier table, but is easier to understand. The horizontal x-axis shows the differences in yield on each soil type +/- the 95% confidence intervals. If the line representing the 95% CI crosses zero then there isn't a difference in the mean yield. In both the Tukey table and plot you can see that the only significant pairwise difference is that between sand and loam, where the yield on sand is significantly lower than that on loam. The sand vs loam comparison is the only one where the **95% confidence intervals around the difference between the means does NOT overlap zero**. Look at your boxplot and/or violin plot earlier to help you understand this.
+The plot of the Tukey HSD test shows the same information as the earlier table, but is easier to understand. The horizontal x-axis shows the differences in yield on each soil type +/- the 95% confidence intervals. If the line representing the 95% CI crosses zero then there isn't a difference in the mean yield. In both the Tukey table and plot you can see that the only significant pairwise difference is that between sand and loam, where the yield on sand is significantly lower than that on loam. The sand vs loam comparison is the only one where the **95% confidence intervals around the difference between the means does NOT overlap zero**. Look at your boxplot plot earlier to help you understand this.
+
+### Reporting multiple comparison tests
+It is essential to explain these in your written work, both in the **Methods** and **Results** sections. In the Methods explain that you've used Tukey HSD to undertake pairwise comparison tests between different levels of your factor (here, the different soil types). In your Results, give both the p-values, and magnitude of the differences for each pairwise comparison. You can report this in a table, but remember to cross-reference to your Table Number in your text.
 
 ## Check the assumptions of your linear model
 Just as you did with the earlier example for the caterpillar growth and the continuous explanatory variable, so you should check model assumptions by examining the residuals (errors) from your expectations. See if you can produce a QQ plot (quantile-quantile plot) of your residuals similar to the following:
@@ -516,11 +550,29 @@ Just as you did with the earlier example for the caterpillar growth and the cont
 soil_resid <- residuals(soil_lm)
 
 gf_qq(~soil_resid) %>% 
-  gf_qqline()
+  gf_qqline() %>% 
+  gf_theme(theme_classic())
 
 ```
 
 As you can see, nearly all of the observed residuals fall nicely along the expected pattern of the residuals (centred around zero), suggesting that a key assumption of a linear model, that the residuals are roughly normally distributed, has been met.
+
+We can look to see whether our next important assumption, equal variances for each level, has been met by plotting up the residuals for each level.
+
+```{r}
+gf_point(soil_resid ~ crop_growth$soil) %>% 
+  gf_theme(theme_classic())
+
+```
+
+We can see that the spread of data points is relatively similar across each of the levels in the analysis. This would suggest that we have met our assumption of homogeneity of variance. When we have much larger sample sizes we could look at the residuals using a boxplot. See if you can produce a boxplot of the residuals, overlay the individual residual points and colour those individual points red. You should see that the median value of the boxplots is very close to zero which is good. The graph below uses `gf_jitter()` rather than `gf_point()` to offset the points from each other slightly. You will find this trick useful when you have a lot of data:
+
+```{r}
+gf_boxplot(soil_resid ~ crop_growth$soil) %>%
+  gf_jitter(soil_resid ~ crop_growth$soil, colour = ~crop_growth$soil) %>% 
+  gf_theme(theme_classic())
+```
+
 
 # Working with large biological datasets
 Modern biology and zoology generates big datasets that at first glance can be challenging to understand. Luckily, you can use the skills you've just learnt to summarise, visualise and analyse them. We will now do this with a dataset of over 300 observations!
@@ -591,13 +643,11 @@ The "errors" or "residuals" which is the "unknown variation" from your analysis 
 * add a line after a `%>%` symbol with `gf_qqline()` to add the predictions. The closer the scatter of points to this line, the better the model assumptions have been met.
 
 ```{r, echo=FALSE}
-p1 <- gf_histogram(~residuals(penguin_lm)) %>% 
+gf_histogram(~residuals(penguin_lm)) %>% 
   gf_labs(x = "Linear model residuals")
 
-p2 <- gf_qq(~residuals(penguin_lm)) %>% 
+gf_qq(~residuals(penguin_lm)) %>% 
   gf_qqline()
-
-multi_plot(p1, p2, cols=2)
 
 ```
 
