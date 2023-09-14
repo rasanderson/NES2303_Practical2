@@ -11,7 +11,7 @@ editor_options:
 library(learnr)
 library(mosaic)
 library(ggpubr)
-caterpillers <- read.csv("www/regression.csv")
+caterpillars <- read.csv("www/regression.csv")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -188,10 +188,10 @@ your laboratory experiments and field surveys.
 ### The experimental data
 
 Here are some data from a laboratory experiment to investigate the relationship
-between caterpiller growth rates and the amount of tannins in their
+between caterpillar growth rates and the amount of tannins in their
 diet. Tannins are produced by some plants to reduce attack by insects. They are
-what gives black tea its slightly bitter taste. The caterpillers were fed diets
-that contained different amounts of tannins (mg), and the caterpiller growth 
+what gives black tea its slightly bitter taste. The caterpillars were fed diets
+that contained different amounts of tannins (mg), and the caterpillar growth 
 rate (mg/day) measured.
 
 Before you continue, answer the following question:
@@ -210,7 +210,7 @@ useful to be aware of both sets of terms.
 
 
 The data for this have been stored in an dataframe called
-`caterpillers`. It is useful to plot these before proceeding.
+`caterpillars`. It is useful to plot these before proceeding.
 
 ```{r x_or_y, echo=FALSE}
 question("What variables go on the x (horizontal) and y (vertical) axes?",
@@ -221,7 +221,7 @@ question("What variables go on the x (horizontal) and y (vertical) axes?",
 ```
 
 Write the R code required calculate the means (averages) of the values
-in the `caterpillers` dataframe. Click the `hint` button if you get stuck.
+in the `caterpillars` dataframe. Click the `hint` button if you get stuck.
 
 ```{r basic_stats, exercise=TRUE, exercise.completion=FALSE}
   
@@ -232,7 +232,7 @@ in the `caterpillers` dataframe. Click the `hint` button if you get stuck.
 the `summary()` function to get some basic statistics, that includes the averages.
 :::
 
-Now produce a scatterplot of the caterpiller growth rate (y-axis)
+Now produce a scatterplot of the caterpillar growth rate (y-axis)
 against the amount of tannins in the diet (x-axis). Use `gf_point()`
 function to display your data as points in an x-y scatterplot. The `gf_`
 or "graph formula" functions are more flexible than base graphics, and
@@ -243,7 +243,7 @@ tend to follow a "formula" syntax.
 ```
 
 ```{r scatter_plot-solution}
-gf_point(growth ~ tannin, data=caterpillers) %>% 
+gf_point(growth ~ tannin, data=caterpillars) %>% 
   gf_theme(theme_classic())
 ```
 
@@ -255,7 +255,7 @@ question("Which statements below are true?",
          answer("Catterpiller growth rate is maximum when tannins are high"),
          answer("The intercept of the fitted line is negative"),
          answer("The gradient of the fitted line is negative", correct = TRUE),
-         answer("Tannins inhibit caterpiller growth rate", correct = TRUE),
+         answer("Tannins inhibit caterpillar growth rate", correct = TRUE),
          answer("The intercept for the fitted line is positive", correct = TRUE)
 )
 ```
@@ -275,8 +275,8 @@ the probability of $H0$ being true. If your p-value is very low (less than 0.05)
 then we "reject" the null hypothesis. We thus "implicitly" accept the alternate
 hypothesis, even though we don't formally test it.
 
-For our caterpiller growth vs tannins dataset, our null hypothesis $H0$ would be
-"Tannins have no affect on caterpiller growth rate". Our linear model will allow
+For our caterpillar growth vs tannins dataset, our null hypothesis $H0$ would be
+"Tannins have no affect on caterpillar growth rate". Our linear model will allow
 us to accept this hypothesis if the probability of the hypothesis being true is
 greater than 5% (p > 0.05), or reject it if the probability of it being true is
 less than 5% (p < 0.05). The 0.05 cutoff is a scientific convention.
@@ -294,9 +294,9 @@ linear model:
 `summary(lm_results)`
 
 In the R coding space below, create a linear model for your
-`caterpiller` data, making sure that you specify the response and
+`caterpillar` data, making sure that you specify the response and
 explanatory variables the right way round. Store the results in an R
-objected called `caterpiller_lm` then use the `summary()` function to
+objected called `caterpillar_lm` then use the `summary()` function to
 display the results of the analysis.
 
 ```{r lm_calc, exercise=TRUE, exercise.completion=FALSE}
@@ -304,8 +304,8 @@ display the results of the analysis.
 ```
 
 ```{r lm_calc-solution}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
-summary(caterpiller_lm)
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
+summary(caterpillar_lm)
 ```
 
 You should see an output summary, with quite a lot of information in it,
@@ -318,15 +318,15 @@ output by the `summary()` command.
 If your linear model is correct, you should see something like:
 
 ```{r summary_table, echo=FALSE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
-summary(caterpiller_lm)
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
+summary(caterpillar_lm)
 ```
 
 The first line simply shows you how you called the `lm()` function, and
 it is worth checking this, just to ensure you used it in the way you
 think you did:
 
-`lm(formula = growth ~ tannin, data = caterpillers)`
+`lm(formula = growth ~ tannin, data = caterpillars)`
 
 The next couple of rows summarise information about the **residuals**.
 We will describe how these are calculated in more detail shortly. The
@@ -351,8 +351,8 @@ it is two parameters:
 
 Gives the values calculated by the linear model for your two parameters:
 
--   `r round(caterpiller_lm$coefficients[1],2)` for the intercept
--   `r round(caterpiller_lm$coefficients[2],2)` for the gradient. This
+-   `r round(caterpillar_lm$coefficients[1],2)` for the intercept
+-   `r round(caterpillar_lm$coefficients[2],2)` for the gradient. This
     is **negative** as growth rate is low with high tannin, i.e. the
     line goes down from left to right.
 
@@ -371,7 +371,7 @@ This indicates "how likely you are to have obtained these values from a
 t-distribution according to the null hypothesis $H0$". That's very confusing!
 A simpler interpretation is "what is the probability of obtaining the
 estimated intercept and gradient if there was **no relationship** between
-caterpiller growth rate and tannin". Basically, the **lower** these
+caterpillar growth rate and tannin". Basically, the **lower** these
 **p-values** the **more important** the gradient and intercept.
 
 If the p-values are very low, the way R displays them is confusing. You
@@ -416,7 +416,7 @@ percentage. It indicates what proportion (or percentage) of your y
 (response) value can be explained by your x-value (explanatory). Two
 R-squared values are given, and always use the one headed
 `Adjusted R-squared`. You have a value of 0.7893 which means that almost
-79% of the variation in caterpiller growth can be explained by variation
+79% of the variation in caterpillar growth can be explained by variation
 in tannin.
 
 **F-statistics** can be produced by all linear models. Here, this is an overall
@@ -439,7 +439,7 @@ explanatory variables, and so the overall model p-value will differ.
 
 ## Model predictions
 
-Our linear model indicated that the relationship between tannins and caterpiller growth rate is
+Our linear model indicated that the relationship between tannins and caterpillar growth rate is
 highly significant therefore it would be usefule to display the predicted line
 from the linear model onto your scatter of points.
 Remember that your fitted line will have the same intercept and gradient
@@ -457,7 +457,7 @@ interpreted as the English word "then". So, in English you
 which in R code is:
 
 ```{r show_fitted_plot, echo=TRUE, eval=FALSE}
-gf_point(growth ~ tannin, data=caterpillers) %>% 
+gf_point(growth ~ tannin, data=caterpillars) %>% 
   gf_lm() %>% 
   gf_theme(theme_classic())
 ```
@@ -465,7 +465,7 @@ gf_point(growth ~ tannin, data=caterpillers) %>%
 Notice the symbol `%>%` at the end of the first line, which you should
 read as "then". Try out these commands below. What happens if you run:
 
-`gf_lm(growth ~ tannin, data=caterpillers)`
+`gf_lm(growth ~ tannin, data=caterpillars)`
 
 What is the effect of adding the argument `interval = "confidence"` to the `gf_lm()` function?
 
@@ -474,16 +474,16 @@ What is the effect of adding the argument `interval = "confidence"` to the `gf_l
 ```
 ```{r plot_data-solution}
 # Scatterplot with fitted line
-gf_point(growth ~ tannin, data=caterpillers) %>% 
+gf_point(growth ~ tannin, data=caterpillars) %>% 
   gf_lm() %>% 
   gf_theme(theme_classic())
 
 # gf_lm simply produces the line
-gf_lm(growth ~ tannin, data=caterpillers) %>% 
+gf_lm(growth ~ tannin, data=caterpillars) %>% 
   gf_theme(theme_classic())
 
 # You can add standard error bands to the fitted line
-gf_point(growth ~ tannin, data=caterpillers) %>% 
+gf_point(growth ~ tannin, data=caterpillars) %>% 
   gf_lm(interval = "confidence") %>% 
   gf_theme(theme_classic())
 
@@ -495,17 +495,17 @@ gf_point(growth ~ tannin, data=caterpillers) %>%
 The fitted or "predicted" values are those along your straight line, which you have just plotted. For
 the 9 values of tannin, these are stored in the model output, under the
 `fitted.values` option which you can access by typing
-`caterpiller_lm$fitted.values` after you have created your linear model.
+`caterpillar_lm$fitted.values` after you have created your linear model.
 Try it now, and it displays the nine fitted values for tannin levels 1
 to 9. Compare it with the graph you created earlier.
 
 ```{r lm_fitted, exercise=TRUE, exercise.completion=FALSE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
 
 ```
 ```{r lm_fitted-solution}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
-model_fitted_values <- caterpiller_lm$fitted.values
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
+model_fitted_values <- caterpillar_lm$fitted.values
 model_fitted_values
 ```
 
@@ -529,8 +529,8 @@ which we can enter a single tannin value (`4.36`) or the tannin values 1 to 10
 via the shortcut `1:10`:
 
 ```{r lm_makeFun, echo=TRUE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
-predictor <- makeFun(caterpiller_lm)
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
+predictor <- makeFun(caterpillar_lm)
 predictor(4.36)
 predictor(1:10)
 ```
@@ -545,13 +545,13 @@ call the function you create whatever you want (you don't need to call
 it `predictor`).
 
 ```{r lm_makeFun2, exercise=TRUE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
 ```
 ```{r lm_makeFun2-solution}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
 
 # Create your prediction function. Let's call it growth_predictor
-growth_predictor <- makeFun(caterpiller_lm)
+growth_predictor <- makeFun(caterpillar_lm)
 
 # Now predict the growth rate at e.g. tannin 7.12 mg
 growth_predictor(7.12)
@@ -582,8 +582,8 @@ We have already mentioned that your linear model has this structure:
 but we have focussed entirely on the response and explanatory variables, we haven't talked about the errors. These are also called "residuals". They are the unknown "noise" from your model predictions as represented by the blue straight line, and the black data points of your observations:
 
 ```{r fitted_line_and_data, echo=FALSE, warning=FALSE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
-gf_point(growth ~ tannin, data=caterpillers) %>% 
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
+gf_point(growth ~ tannin, data=caterpillars) %>% 
   gf_lm() %>% 
   gf_theme(theme_classic())
 ```
@@ -591,10 +591,10 @@ gf_point(growth ~ tannin, data=caterpillers) %>%
 These errors (residuals) might be clearer to see if highlighted in red; they are the difference between your fitted and observed values. Note that some of the errors are positive (above the blue fitted line) and some are negative (below the line), and the sum of these errors will be zero:
 
 ```{r fitted_line_and_data2, echo=FALSE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
-fits <- caterpiller_lm$fitted.values
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
+fits <- caterpillar_lm$fitted.values
 
-gf_point(growth ~ tannin, data=caterpillers) %>% 
+gf_point(growth ~ tannin, data=caterpillars) %>% 
   gf_lm() %>% 
   gf_segment(growth + fits ~ tannin + tannin, colour = "red") %>% 
   gf_theme(theme_classic())
@@ -620,7 +620,7 @@ question("Which of the following statements is true?",
 
 You wrote your model as
 
-`lm(growth ~ tannin, data=caterpillers)`
+`lm(growth ~ tannin, data=caterpillars)`
 
 which is the equivalent of
 
@@ -637,17 +637,17 @@ represents the residual error.
 ### Looking at your residuals
 
 It is easy to view the residuals from your model using the `residuals()`
-function; try it here to look at the numbers from your `caterpiller_lm`
+function; try it here to look at the numbers from your `caterpillar_lm`
 linear model. Try it out now:
 
 ```{r lm_residuals, exercise=TRUE, exercise.completion=FALSE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
 
 ```
 
 ::: {#lm_residuals-hint}
 Simply use the `residuals()` function with your model output
-`caterpiller_lm` as its parameter to display the positive and negative
+`caterpillar_lm` as its parameter to display the positive and negative
 residual values.
 :::
 
@@ -658,8 +658,8 @@ of your residuals, and check that they look approximately normal
 so it is difficult to assess this histogram:
 
 ```{r histogram_residuals}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
-gf_histogram(~ residuals(caterpiller_lm)) %>% 
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
+gf_histogram(~ residuals(caterpillar_lm)) %>% 
   gf_dens()
 ```
 
@@ -677,7 +677,7 @@ from a normal distribution. Let us create a set of random data from a
 normal distribution, with a mean of zero, and display its frequency
 histogram:
 
-```{r normal_random}
+```{r normal_random, warning=FALSE}
 my_data <- rnorm(200) # Creates 50 data points from a random distribution
 mean(my_data)        # Check the average is zero
 gf_histogram(~ my_data) 
@@ -690,7 +690,7 @@ look at this with some more randomly generated data, against a dotted
 line showing what values would have been obtained if there was a perfect
 match:
 
-```{r normal_random_with_qqplot}
+```{r normal_random_with_qqplot, warning=FALSE}
 my_data <- rnorm(200) # Creates 50 data points from a random distribution
 gf_qq(~ my_data)  %>% # Your 50 data points
   gf_qqline()
@@ -698,17 +698,17 @@ gf_qq(~ my_data)  %>% # Your 50 data points
 
 The match between the random data (points) and that expected in theory
 (dots) is of course excellent. But what about your data from your
-caterpillers when you only have 9 data points? Try it now:
+caterpillars when you only have 9 data points? Try it now:
 
-```{r caterpiller_qqplot, exercise=TRUE, exercise.completion=FALSE}
-caterpiller_lm <- lm(growth ~ tannin, data=caterpillers)
+```{r caterpillar_qqplot, exercise=TRUE, exercise.completion=FALSE}
+caterpillar_lm <- lm(growth ~ tannin, data=caterpillars)
 
 ```
 
-```{r caterpiller_qqplot-solution}
+```{r caterpillar_qqplot-solution}
 # Store the residuals in a new variable called model_error, then use the
 # gf_qq() and gf_qqline() functions to display the QQ plots
-model_error <- residuals(caterpiller_lm)
+model_error <- residuals(caterpillar_lm)
 gf_qq( ~ model_error) %>% 
   gf_qqline()
 ```
@@ -742,7 +742,7 @@ contain an explanation of the data analyses used and software. For example:
 
 "All laboratory data were initially recorded in Excel spreadsheets for each
 experiment. These were saved as .CSV files, and analysed in R 4.3 using linear
-models, to determine whether caterpiller diet had any impact on caterpiller
+models, to determine whether caterpillar diet had any impact on caterpillar
 growth rate. Linear model assumptions of normally-distributed errors were
 checked through the creation of quantile-quantile residual plots."
 
@@ -755,7 +755,7 @@ P \< 0.001) with 78.9% of the variability in growth explained by tannin (Table 1
 
 Ensure that Figure 1 (your scatterplot with fitted line) has a caption and is
 nicely formatted. You will **not** be able to use the output from your
-`summary(caterpiller_lm)` function as a direct copy-and-paste to create Table 1.
+`summary(caterpillar_lm)` function as a direct copy-and-paste to create Table 1.
 **Always** retype the R output so it is properly formatted, with a sensible 
 number of decimal places. If reporting F-ratios, remember to include the 
 degrees of freedom as subscripts, e.g. "The overall linear model for tannins and
