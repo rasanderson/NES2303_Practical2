@@ -1,6 +1,6 @@
 ---
 title: 'Practical 2: Getting started with Linear models'
-author: "BIO2020"
+author: "Roy Sanderson"
 output:
   html_document:
     df_print: paged
@@ -41,7 +41,7 @@ library(mosaic)
 ```
 
 # Introduction
-In this practical you will be introduced to **linear models** which provide a way to assess the relationships between a **response** variable and one or more **explanatory** variable(s). You will recall that we are trying to use a "goal-oriented" approach where possible in BIO2020:
+In this practical you will be introduced to **linear models** which provide a way to assess the relationships between a **response** variable and one or more **explanatory** variable(s). You will recall that we are trying to use a "goal-oriented" approach where possible in NES2303:
 
 &nbsp;
 
@@ -93,13 +93,13 @@ All linear models have a continuous response variable. By "continuous" the respo
 Linear models with continuous explanatory variables are often called "regression analyses". If you have two or more continuous explanatory variables you may see them called "multiple regression".
 
 ## Download data and calculate simple statistics
-We will start by looking at the `caterpillars` data set that we were using in the interactive website for linear models with continuous explanatory variables. The `caterpillars.csv` data file is available on Canvas and should be downloaded. Remember that this will end up in your "Downloads" folder: you will need to move it from Downloads into your BIO2020 folder before you can read it into R. After you have downloaded the file:
+We will start by looking at the `caterpillars` data set that we were using in the interactive website for linear models with continuous explanatory variables. The `caterpillars.csv` data file is available on Canvas and should be downloaded. Remember that this will end up in your "Downloads" folder: you will need to move it from Downloads into your NES2303 folder before you can read it into R. After you have downloaded the file:
 
 * Open up the `caterpillars.csv` file in Microsoft Excel to have a quick look at it, but ignore any requests to save it in Excel format.
-* Start RStudio. Select **File -> Recent projects -> BIO2020** to open up the RStudio project you created in the first practical session.
+* Start RStudio. Select **File -> Recent projects -> NES2303** to open up the RStudio project you created in the first practical session.
 * Create a new R script: in RStudio select **File -> New File -> R Script**. It is good practice to save your script immediately by going to **File -> Save** and give it a sensible name, e.g. `Practical2.R`.
 
-Now start writing the contents of your script, with a title line, explanation of what your script is doing, etc. **Note**: some of you are storing all your CSV files in a `Data` subfolder, others are storing them in the main `BIO2020` folder. It does not matter which one you choose, but adjust the `read.csv()` call below accordingly:
+Now start writing the contents of your script, with a title line, explanation of what your script is doing, etc. **Note**: some of you are storing all your CSV files in a `Data` subfolder, others are storing them in the main `NES2303` folder. It does not matter which one you choose, but adjust the `read.csv()` call below accordingly:
 
 **Note**: Write a suitable comment after a `#` symbol at the top of your script to explain what it is going to do.
 * Write the line `library(bio2020)` in the script, and run it, to activate all the necessary add-on R packages.
@@ -116,7 +116,7 @@ library(mosaic)
 caterpillar_dat <- read.csv("Data/caterpillars.csv")
 ```
 
-If RGui or RStudio does not find the file `caterpillars.csv` check that you correctly copied the CSV from Downloads to BIO2020, that there are no spelling errors, or whether you need to omit the `Data/` if you are not using a subfolder called `Data` within the `BIO2020` folder.
+If RGui or RStudio does not find the file `caterpillars.csv` check that you correctly copied the CSV from Downloads to NES2303, that there are no spelling errors, or whether you need to omit the `Data/` if you are not using a subfolder called `Data` within the `NES2303` folder.
 
 Using the functions that you learned in the first practical familiarise yourself with the `caterpillars` data. 
 
@@ -196,12 +196,12 @@ Were your expectations correct? Using the summary information from your model an
 
 Now some answers (please think about the above questions before reading these!!):
 
- + The column headed 'Estimate' gives the estimated value of your intercept and slope. So your intercept is `11.756` which you were probably able to "guesstimate" by eye from the scatterplot as being around 12.0
- + The slope is harder to guesstimate, and is `-1.217`. Notice that it is **negative** because the scatter of points **declines** from left to right on your graph
- + You may know that R-squared ($R^2$) is the proportion of variation explained by your linear model. What is a little confusing is that two $R^2$ values are given, one called `Multiple` and the other `Adujusted`. Always refer to the `Adjusted R-squared` which is `0.789` i.e. almost 79% of the variation in caterpillar growth rate can be explained by tannin
- + You can enter the `sqrt()` function directly in the Console. Again, used the adjusted $R^2$ which should give you a correlation coefficient of `0.888`. There is also a separate `cor()` function to calculate the correlation between any two variables should you need it.
- + Overall model significance is shown by the F-statistic. The higher the F-statistic (30.97), the greater the "significance" of the model, which is reflected by a **lower** p-value (here p=0.0008461). You would write something like "Overall there was a significant negative relationship between caterpillar growth and tannin ($F_{1,7}$=30.97,p<0.001)". **Note**: by convention you provide the **degrees of freedom as subscripts** when reporting F-values, and **3 decimal places** when reporting p-values.
-  + The p-value for tannin is given as `0.000846` so to three decimal places it is `0.001`. But what about the p-value for the intercept? This is given as `9.54e-06`. This "exponential" format is a short-hand method of referring to very small numbers, using `e-` or very big numbers, using `e+`. So here we have a very small number, with six zeros, i.e. `0.00000954`. To three decimal places, this is zero, but in reality you **never have a p-value of zero**, there will always be a positive value. So by convention, to three decimal places you would report this as `p<0.001` which can be interpreted as "p is less than 0.001". This is highly significant, because the intercept is a long way from zero with a value of almost 12.
+ + The column headed 'Estimate' gives the estimated value of your intercept and slope. So your intercept is `11.988` which you were probably able to "guesstimate" by eye from the scatterplot as being around 12.0
+ + The slope is harder to guesstimate, and is `-1.259`. Notice that it is **negative** because the scatter of points **declines** from left to right on your graph
+ + You may know that R-squared ($R^2$) is the proportion of variation explained by your linear model. What is a little confusing is that two $R^2$ values are given, one called `Multiple` and the other `Adujusted`. Always refer to the `Adjusted R-squared` which is `0.815` i.e. almost 79% of the variation in caterpillar growth rate can be explained by tannin
+ + You can enter the `sqrt()` function directly in the Console. Again, used the adjusted $R^2$ which should give you a correlation coefficient of `0.903`. There is also a separate `cor()` function to calculate the correlation between any two variables should you need it.
+ + Overall model significance is shown by the F-statistic. The higher the F-statistic (30.97), the greater the "significance" of the model, which is reflected by a **lower** p-value (here p=0.0008461). You would write something like "Overall there was a significant negative relationship between caterpillar growth and tannin ($F_{1,48}$=216.9,p<0.001)". **Note**: by convention you provide the **degrees of freedom as subscripts** when reporting F-values, and **3 decimal places** when reporting p-values.
+  + The p-value for tannin is given as `<2e-16` so to three decimal places it is `0.001`. This "exponential" format is a short-hand method of referring to very small numbers, using `e-` or very big numbers, using `e+`. So here we have a very small number, with sixteen zeros, i.e. `0.0000000000000002`. To three decimal places, this is zero, but in reality you **never have a p-value of zero**, there will always be a positive value. So by convention, to three decimal places you would report this as `p<0.001` which can be interpreted as "p is less than 0.001". This is highly significant.
   
 ### Interactive demonstration of SS, slopes, intercepts
 You may find it useful to look at this [Interactive demonstration](https://naturalandenvironmentalscience.shinyapps.io/how_anova_works/#section-variances-with-continuous-explanatory-variables) of the tannin and caterpillar growth data, where you can see the sums of squares, and the effects of changing the amount of "noise" in your data.
@@ -285,21 +285,9 @@ Is the value that you obtained from your `predictor` function the same as when y
 
 ## Checking the assumptions of the linear model
 ### Revision: what are linear model residuals and why do they matter?
-All models are simplifications of reality, and thus make various assumptions about your data. You will remember from the online interactive website tutorials [Checking model assumptions](https://naturalandenvironmentalscience.shinyapps.io/linear_explan/#section-checking-model-assumptions) that one of the key assumptions of linear models is that the residuals are from a normal distribution. Residuals are the "noise" in your data. In a 'perfect' set of data all your observations would fall exactly on the fitted line. But look at the graph with your fitted line: only one observation (tannin concentration 7.0) lies very close to the fitted line. The others are all slightly above or below the line. A normal distribution is a bell-shaped curve, so if the model is a good one, if you create a frequency histogram of the residuals you should see (roughly) that sort of curve. **Note**: "residuals" are sometimes referred to as "errors" and represented by the Greek letter Epsilon ($\epsilon$).
+All models are simplifications of reality, and thus make various assumptions about your data. You will remember from the online interactive website tutorials [Checking model assumptions](https://naturalandenvironmentalscience.shinyapps.io/NES2303_regression/#section-checking-model-assumptions) that one of the key assumptions of linear models is that the residuals are from a normal distribution. Residuals are the "noise" in your data. In a 'perfect' set of data all your observations would fall exactly on the fitted line. But look at the graph with your fitted line: only one observation (tannin concentration 7.0) lies very close to the fitted line. The others are all slightly above or below the line. A normal distribution is a bell-shaped curve, so if the model is a good one, if you create a frequency histogram of the residuals you should see (roughly) that sort of curve. **Note**: "residuals" are sometimes referred to as "errors" and represented by the Greek letter Epsilon ($\epsilon$).
 
-Imagine instead of the 9 observations you have in your caterpillar dataset, you'd done a huge experiment with 100 caterpillars. The residuals above and below the line should average around zero, and produce a rough bell-shaped curve (**Note** as you only have 9 observations, you can't create this histogram):
-
-```{r, bell_curve-setup, echo=FALSE}
-set.seed(123)
-model_residuals <- rnorm(100)
-```
-```{r, bell_curve, echo=FALSE}
-gf_histogram(~model_residuals) %>% 
-  gf_labs(x = "Residuals from linear model") %>% 
-  gf_theme(theme_classic())
-```
-
-You can see from this frequency histogram that most of the 100 residual values are near to zero and that it forms a (very rough) bell-shaped curve.
+The residuals above and below the line should average around zero, and produce a rough bell-shaped curve.
 
 ### Residuals from the caterpillar linear model
 You can extract the residuals using the `residuals()` function which takes the argument of your model object. 
@@ -313,32 +301,16 @@ growth_resids <- residuals(growth_lm)
 gf_histogram(~growth_resids)
 ```
 
-The main problem here is that you only have 9 observations, not 100, so it is very difficult just looking at a frequency histogram of the residuals to determine if they are normally distributed (bell-shaped curve). A more robust method of checking the distribution of the residuals is to use a QQ plot (quantile-quantile plot). This ranks your residuals from lowest to highest, and compares them with what would have been expected if your residuals are from a normal distribution.
+With 50 observations your frequency histogram of the residuals looks roughly bell-shaped, but with smaller sample sizes we need a better method to determine if they are normally distributed. Two good things to check are a) that the residuals are similar in spread for low and high tannin levels (x-axis predictor), and b) use a QQ plot (quantile-quantile plot) of your residuals. The latter ranks your residuals from lowest to highest, and compares them with what would have been expected if your residuals are from a normal distribution.
 
-We can use the `gf_qq()` function to plot the sorted residuals and we can add a straight line showing the theoretical expectation using `gf_qqline()` function. The closer the points are to the straight line the more robust is your linear model.
+Both these "diagnostic" plots can be created directly from your model output. R actually produces four diagnostic plots, but we are only interested in the first two, using the `which = c(1,2)` option:
 
 ```{r}
-gf_qq(~growth_resids) %>%
-  gf_qqline()
+plot(growth_lm, which=c(1,2))
+
 ```
 
-Now you can see that even though we only have 9 data points, they fall very closely onto the dotted straight line. This indicates that the model assumptions have been met. **Note** The QQ plot is to check _model assumptions_. It is not used to test the statistical significance of individual explanatory variables, for which you need to look at the `summary()` output of the linear model.
-
-The second assumption that we need to check is that we have equal spread of residuals around the regression line. That is the residuals do not get bigger or smaller as the fitted values change. We can do this by "plotting" the lm object. This is give us a series of plots but we are only interested in in the first two.
-
-```{r echo=TRUE, eval=FALSE}
-par(mfrow=c(1,2)) # sets two plots side-by-side in the Plots tab in RStudio
-plot(growth_lm, which =1:2) # plots the first two diagnostic plots from the lm object
-par(mfrow=c(1,1)) # sets the plotting window back to just one plot
-```
-
-```{r echo=FALSE}
-par(mfrow=c(1,2)) # sets two plots side-by-side in the Plots tab in RStudio
-plot(growth_lm, which =1:2) # plots the first two diagnostic plots from the lm object
-par(mfrow=c(1,1)) # sets the plotting window back to just one plot
-```
-
-Firstly, we can see the qq-plot again on the right hand side. This follows the same pattern as the one we plotted a minute a go so we can just ignore it. The plot on the left hand side shows our residuals vs fitted values and we can see that these are roughly symmetrical around 0. This would indicate that we have no systematic change in the residuals along the fitted values.
+In the plot headed 'Residuals vs Fitted' you can see that the size of the residuals is roughly the same for the full range of predicted values. The Normal-QQ plot  shows a rough straight line between the ranked expected and observed residuals. If the line formed an S-shape then your model would not be valid. Personally I find the QQ plot the most useful diagnostic plot to check that your model assumptions have been satisfied.
 
 ## Reporting data analyses and results
 Imagine you had done this caterpillar experiment as part of your final-year research project or on another module. How would you write up the "Data Analysis" part of your Methods? How would you write up your Results? Do a rough draft of what you might include and discuss it with a demonstrator.
@@ -347,7 +319,7 @@ Imagine you had done this caterpillar experiment as part of your final-year rese
 When your linear model has categorical explanatory variables it is often called "Analysis of Variance" or ANOVA. If you have only one categorical explanatory, it might be called "One-Way ANOVA", with two categorical explanatory variables "Two-Way ANOVA" etc. Today you just have one explanatory.
 
 ## Download and check the data
-Download `crop_growth.csv` from Canvas and open it in Excel to have a quick look at its contents (don't edit it - ignore any requests to save it in Excel format). Remember that you have to use File Explorer to copy it from your Downloads folder to your BIO2020. Depending on whether you are saving your CSV files in a `Data` subfolder, or keep them in your BIO2020 folder, adjust the following code. This imports the data, and allows you to look at its structure. Remember to **add comment lines** as shown below to help you when you look at your script when revising for your assessment in January. Execute each line sequentially as usual by hitting the <kbd>Ctrl</kbd>+<kbd>Enter</kbd> key combination. This may be shown as <kbd>Ctrl</kbd>+<kbd>  &#8629;  </kbd> on some keyboards:
+Download `crop_growth.csv` from Canvas and open it in Excel to have a quick look at its contents (don't edit it - ignore any requests to save it in Excel format). Remember that you have to use File Explorer to copy it from your Downloads folder to your NES2303 folder. Depending on whether you are saving your CSV files in a `Data` subfolder, or keep them in your NES2303 folder, adjust the following code. This imports the data, and allows you to look at its structure. Remember to **add comment lines** as shown below to help you when you look at your script when revising for your assessment in January. Execute each line sequentially as usual by hitting the <kbd>Ctrl</kbd>+<kbd>Enter</kbd> key combination. This may be shown as <kbd>Ctrl</kbd>+<kbd>  &#8629;  </kbd> on some keyboards:
 
 ```{r, eval=FALSE}
 # Example linear model with categorical explanatory data; crop growth on
@@ -574,7 +546,7 @@ gf_boxplot(soil_resid ~ crop_growth$soil) %>%
 ```
 
 
-# Working with large biological datasets
+# Working with large biological datasets (Optional - in your own time)
 Modern biology and zoology generates big datasets that at first glance can be challenging to understand. Luckily, you can use the skills you've just learnt to summarise, visualise and analyse them. We will now do this with a dataset of over 300 observations!
 
 The data are morphological measures of three species of Antartica penguins, although we will initially focus on their body mass. Key things for you to answer:
@@ -583,7 +555,7 @@ The data are morphological measures of three species of Antartica penguins, alth
 * Is body mass explained by the species of penguin?
 * Are there differences in body mass between each pairwise comparison of species?
 
-Download the `penguins.csv` data set from Canvas and copy it to your `BIO2020` or `BIO2020/Data` folder. If you want, open it in Microsoft Excel to see what it contains. If you have not already done so, please look at [Interactive website on how to visualise data](https://naturalandenvironmentalscience.shinyapps.io/Summary_vis/) which uses this dataset as an example.
+Download the `penguins.csv` data set from Canvas and copy it to your `NES2303` or `NES2303/Data` folder. If you want, open it in Microsoft Excel to see what it contains. If you have not already done so, please look at [Interactive website on how to visualise data](https://naturalandenvironmentalscience.shinyapps.io/Summary_vis/) which uses this dataset as an example.
 
 Read in the dataset in the usual way via the `read.csv()` function, storing it in a table (data frame) called `penguins`.
 
@@ -627,29 +599,8 @@ penguin_lm <- lm(body_mass_g~species, data = penguins)
 print(anova(penguin_lm))
 ```
 
-
 ## Check the assumptions of your analysis
-The "errors" or "residuals" which is the "unknown variation" from your analysis are assumed to come from a normal, or bell-shaped, distribution. You can check this by plotting them on a frequency histogram, and also a QQ plot.
-
-### Histogram plot hints
-
-* Use the `residuals()` function to extract the errors (unknown variation) from your fitted `penguin_lm`
-* Use `gf_histogram()` to display a frequency histogram of these residuals
-* After a `%>%` symbol, "then" add a line after `gf_histogram()` to modify the x-axis label using `gf_labs()`
-
-### QQ plot hints
-
-* use `gf_qq()` function with the residuals to display the QQ scatterplot of expected and predicted residuals
-* add a line after a `%>%` symbol with `gf_qqline()` to add the predictions. The closer the scatter of points to this line, the better the model assumptions have been met.
-
-```{r, echo=FALSE}
-gf_histogram(~residuals(penguin_lm)) %>% 
-  gf_labs(x = "Linear model residuals")
-
-gf_qq(~residuals(penguin_lm)) %>% 
-  gf_qqline()
-
-```
+The "errors" or "residuals" which is the "unknown variation" from your analysis are assumed to come from a normal, or bell-shaped, distribution. You can check this by plotting them on a frequency histogram, and also a diagnostic plot, for example a QQ plot.
 
 ## How do species body mass differ between pairs?
 You have three species of penguin, and your ANOVA merely indicates that species type has an effect on body mass. It doesn't tell you if all three are different from each other, or if two of them are the same. Do a multiple comparison test to do pairwise comparisons in body mass between two species at a time. Which species are the same, and which differ? **Hint**: use the `TukeyHSD()` function with your `penguin_lm` model:
@@ -660,4 +611,4 @@ plot(TukeyHSD(penguin_lm))
 ```
 
 ## Interpretation
-How might you write up these results in a report? Compare your ANOVA and Tukey results to your boxplot. Also look at the BIO2020 Handbook and the last section on report-writing.
+How might you write up these results in a report? Compare your ANOVA and Tukey results to your boxplot. Also look at the NES2303 Course Handbook and its last section on report-writing.
