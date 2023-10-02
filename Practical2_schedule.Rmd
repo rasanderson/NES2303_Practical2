@@ -38,6 +38,7 @@ library(dplyr)
 library(palmerpenguins)
 library(ggformula)
 library(mosaic)
+library(car)
 ```
 
 # Introduction
@@ -109,8 +110,9 @@ We need to load the data into R and store it in an object so we can access it ea
 ```{r}
 # Examples of linear models for continuous and categorical data
 
-# Activate the mosaic R package
+# Activate the mosaic and car R packages
 library(mosaic)
+library(car)
 
 # Read in the caterpillars.csv file (omit Data/ if not using a subfolder to store data)
 caterpillar_dat <- read.csv("Data/caterpillars.csv")
@@ -434,20 +436,20 @@ The syntax with the `lm()` function is the same:
 
 `lm(response_variable ~ categorical_explanatory_variable, data = dataframe_name)`
 
-We will save our results from the `lm()` function in an R objected called `soil_lm` and then use the `anova()` function which is conventional way of displaying the results of linear models with this type of structure:
+We will save our results from the `lm()` function in an R objected called `soil_lm` and then use the `Anova()` function which is conventional way of displaying the results of linear models with this type of structure:
 
 ```{r, echo=TRUE, eval=FALSE}
 # Create linear model and store the results in soil_lm
 soil_lm <- lm(yield ~ soil, data = crop_growth)
 
 # Display the output of the linear model as an ANOVA table
-anova(soil_lm)
+Anova(soil_lm)
 ```
 ```{r, echo=FALSE, eval=TRUE}
 # Create linear model and store the results in soil_lm
 soil_lm <- lm(yield ~ soil, data = crop_growth)
 # Display the output of the linear model as an ANOVA table
-print(anova(soil_lm))
+print(Anova(soil_lm))
 ```
 
 
@@ -461,7 +463,7 @@ d) There was a significant difference in crop yield in response to soil type ($F
 
 Which of the four is the best description of the results and why? Discuss your thoughts **with demonstrators and your fellow students**.
 
-You might be wondering why we used the `anova()` function rather than `summary()`. The latter can be a little confusing at first sight:
+You might be wondering why we used the `Anova()` function rather than `summary()`. The latter can be a little confusing at first sight:
 
 ```{r}
 summary(soil_lm)
@@ -589,14 +591,14 @@ This linear model will be an "ANOVA" since species is a categorical explanatory 
 
 * Use `lm()` function to create your linear model with the data stored in `penguins`. Think about which variable is your response, and which is your explanatory.
 * Store the results of your `lm()` function in `penguin_lm` by using the `<-` symbol
-* Display the analysis of variance of `penguin_lm` using the `anova()` function
+* Display the analysis of variance of `penguin_lm` using the `Anova()` function
 * Does species have a significant effect on body mass? How would you write the F and p-values in a written report **Hint**: not quite the same as shown in the table.
 
 The results of your linear model should be displayed as below:
 
 ```{r, echo = FALSE}
 penguin_lm <- lm(body_mass_g~species, data = penguins)
-print(anova(penguin_lm))
+print(Anova(penguin_lm))
 ```
 
 ## Check the assumptions of your analysis
