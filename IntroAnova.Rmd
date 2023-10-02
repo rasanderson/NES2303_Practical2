@@ -7,6 +7,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 library(mosaic)
+library(car)
 crop_growth <- read.csv("www/crop_growth.csv")
 knitr::opts_chunk$set(echo = FALSE)
 ```
@@ -182,7 +183,7 @@ The main thing to check is that the spread of the data is roughly the same for e
 Analysis of your data has the same syntax when the explanatory variable is
 categorical as when it is continuous, which you have already done. In the box
 below, analyse your data with the `lm` command, and summarise results using the
-`anova` command.
+`Anova` command.
 
 ```{r basic_lm, exercise = TRUE, exercise.completion = FALSE}
 
@@ -190,7 +191,7 @@ below, analyse your data with the `lm` command, and summarise results using the
 ```{r basic_lm-solution}
 # Create the linear model
 crop_growth_lm <- lm(yield ~ soil, data = crop_growth)
-anova(crop_growth_lm)
+Anova(crop_growth_lm)
 ```
 
 You can see that against your explanatory variable of soil, there is an F-value
