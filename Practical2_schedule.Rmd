@@ -79,7 +79,7 @@ Commonly used names in textbooks for linear models like this differ depending on
 * **Regression** - when you have one or more continuous explanatory variables
 * **Analysis of Variance (ANOVA)** - when you have one or more categorical explanatory variables
 
-# Aims and objectives
+# Learning objectives
 The overall aim of this practical are to show you how to use the `lm()` function, using datasets that you should already have seen on the interactive websites at 
 [linear models with continuous explanatories (right-click and open in a new tab)](https://naturalandenvironmentalscience.shinyapps.io/linear_explan/) and  [linear models with categorical explanatories (right-click and open in a new tab)](https://naturalandenvironmentalscience.shinyapps.io/categorical_explan/). Please work through these websites **before** attempting this practical. You will also have the opportunity to gain confidence using linear models with a new dataset. **Specific objectives** are to:
 
@@ -616,8 +616,15 @@ gf_boxplot(soil_resid ~ crop_growth$soil) %>%
   gf_theme(theme_classic())
 ```
 
+# Take home messages from today's practical
+You have covered a lot of material in this practical, but the key thing to remember is that linear models provide a flexible wasy of thinking about lots of different 'conventional' statistical tests. "One-way ANOVA", "Regression" in some menu-driven statistics packages have different ways for the user to access them, which causes confusion. The advantage of R is that the same function, `lm()`, can be used for both. Some points to always remember though:
 
-# Working with large biological datasets (Complete in your own time before next week)
+* Make sure you have your response and explanatory the correct way round, especially where both are continuous. It is easy in some 'ambiguous' biological or marine field surveys to code them incorrectly.
+* Regression-style analyses have a continuous explanatory
+* ANOVA-style analyses have a categorical explanatory.
+* Watch your data codings for categorical explanatory. "A", "A", "A", "B", "B", "B" then R will be fine. But if you have "1", "1", "1", "2", "2", "2" etc. then R might incorrectly assume you are doing a regression-style analysis, and calculate insufficient coefficients for your dataset.
+
+# Working with large biological datasets (complete in your own time)
 Modern biology, zoology and marine bioscience generates big datasets that at first glance can be challenging to understand. Luckily, you can use the skills you've just learnt to summarise, visualise and analyse them. We will now do this with a dataset of over 300 observations!
 
 The data are morphological measures of three species of Antartic penguins, although we will initially focus on their body mass. Key things for you to answer:
